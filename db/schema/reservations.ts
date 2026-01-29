@@ -1,0 +1,34 @@
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { cancelActorTypeEnum, reservationStatusEnum } from './enums'
+
+export const reservations = pgTable('reservations', {
+  id: uuid('id').defaultRandom().primaryKey(),
+
+  // 🔑 외부 공유용 코드
+  publicCode: text('public_code').notNull().unique(),
+
+  // 예약자 정보
+  requesterName: text('requester_name').notNull(),
+  requesterPhone: text('requester_phone').notNull(),
+
+  // 소속 (부서/팀/기관명)
+  organization: text('organization').notNull(),
+
+  // 사용 정보
+  purpose: text('purpose').notNull(),
+  destination: text('destination').notNull(),
+
+  startAt: timestamp('start_at', { withTimezone: true }).notNull(),
+  endAt: timestamp('end_at', { withTimezone: true }).notNull(),
+
+  status: reservationStatusEnum('status').notNull().default('pending'),
+
+  // 취소 관련
+  cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
+  cancelActorType: cancelActorTypeEnum('cancel_actor_type'),
+  cancelReason: text('cancel_reason'),
+
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+
+  updatedAt: timestamp('updated_at', { withTimezone: true }),
+})
