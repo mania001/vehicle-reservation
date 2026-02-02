@@ -1,4 +1,4 @@
-// import { ReservationStatus } from './reservation-status'
+import { ReservationStatus } from './reservation-status'
 
 export interface ReservationCreateInput {
   name: string
@@ -10,4 +10,18 @@ export interface ReservationCreateInput {
 
   purpose: string
   destination: string
+}
+
+export interface Reservation {
+  id: string
+  publicCode: string
+  requesterName: string
+  requesterPhone: string
+  organization: string
+  startAt: Date
+  endAt: Date
+  purpose: string
+  destination: string
+  status: ReservationStatus
+  createdAt: Date
 }
