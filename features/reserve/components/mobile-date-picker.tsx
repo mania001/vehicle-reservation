@@ -33,6 +33,8 @@ export const MobileDateTimePicker = ({
   minDate,
   variant = 'start',
 }: MobileDateTimePickerProps) => {
+  // ⚠️ KST 기준 오늘 (클라이언트 UI용)
+  // 서버 저장 시 UTC 변환 필수
   // 오늘 날짜 기준 (과거 선택 방지용)
   const today = startOfToday()
   const scrollRef = useRef<HTMLDivElement>(null) // 시간 버튼들을 감싸는 Ref
@@ -72,7 +74,7 @@ export const MobileDateTimePicker = ({
   const currentMinute = Math.floor(displayDate.getMinutes() / 10) * 10 // 10분 단위 반올림
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 px-0.5">
       <label className="text-xs font-semibold text-slate-400 ml-1">{label}</label>
 
       <Drawer
@@ -86,11 +88,11 @@ export const MobileDateTimePicker = ({
           <Button
             variant="outline"
             className={cn(
-              'w-full h-14 px-4 bg-slate-50 border-none rounded-2xl justify-start font-normal shadow-sm',
+              'w-full h-14 px-4 bg-slate-50 border-none rounded-2xl justify-start text-base font-normal shadow-sm',
               !value && 'text-muted-foreground',
             )}
             // Drawer 열릴 때 값이 없으면 현재 시간으로 즉시 업데이트하고 싶다면 아래 주석 해제
-            onClick={() => !value && onChange(new Date())}
+            onClick={() => !value && onChange(new Date(displayDate.setMinutes(currentMinute)))}
           >
             <Clock
               className={cn(
@@ -99,11 +101,13 @@ export const MobileDateTimePicker = ({
               )}
             />
             {value ? (
-              <span className="text-slate-700 font-medium text-base">
+              <span className="text-foreground font-medium text-base">
                 {format(value, 'yyyy. MM. dd. (eee) HH:mm', { locale: ko })}
               </span>
             ) : (
-              <span className="text-slate-400">일시를 선택해 주세요</span>
+              <span className="text-muted-foreground text-base font-medium">
+                일시를 선택해 주세요
+              </span>
             )}
           </Button>
         </DrawerTrigger>
