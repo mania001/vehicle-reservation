@@ -1,5 +1,13 @@
-import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { cancelActorTypeEnum, reservationStatusEnum } from './enums'
+import { pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+
+export const reservationStatusEnum = pgEnum('reservation_status', [
+  'pending',
+  'approved',
+  'rejected',
+  'cancelled',
+])
+
+export const cancelActorTypeEnum = pgEnum('cancel_actor_type', ['user', 'admin', 'system'])
 
 export const reservations = pgTable('reservations', {
   id: uuid('id').defaultRandom().primaryKey(),
