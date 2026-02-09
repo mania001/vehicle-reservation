@@ -21,7 +21,7 @@ export default function ReservationList({ items, emptyMessage }: Props) {
   return (
     <div className="p-4 space-y-6">
       {items.map(item => (
-        <ReservationCard key={item.id} item={item} />
+        <ReservationCard key={item.reservationId} item={item} />
       ))}
     </div>
   )

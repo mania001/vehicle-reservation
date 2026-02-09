@@ -1,16 +1,16 @@
 import { ReservationTabId } from '../constants/reservation-tabs'
 
 export type AdminReservationListItem = {
-  id: string
+  reservationId: string
   publicCode: string
+  status: ReservationTabId
   requesterName: string
   requesterPhone: string
   organization: string
-  startAt: string
-  endAt: string
   purpose: string
   destination: string
-  status: ReservationTabId
+  startAt: string
+  endAt: string
   isLate?: boolean
   usageStatus?: string | null
   reservationStatus?: string | null

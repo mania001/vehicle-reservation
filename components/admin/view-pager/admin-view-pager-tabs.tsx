@@ -32,7 +32,7 @@ export function AdminViewPagerTabs<TTabId extends string>({
             >
               <span>{tab.label}</span>
 
-              {typeof tab.badgeCount === 'number' && (
+              {typeof tab.badgeCount === 'number' && tab.badgeCount > 0 && (
                 <span
                   className={cn(
                     'ml-2 inline-flex items-center justify-center text-xs font-bold px-2 py-0.5 rounded-full',

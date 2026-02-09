@@ -1,42 +1,52 @@
+import { db } from '@/db'
+import { reservations, usageSessions, vehicles } from '@/db/schema'
+import { ReservationTabId } from '@/features/admin/reservations/constants/reservation-tabs'
+import { TAB_QUERY_MAP } from '@/features/admin/reservations/constants/tab-query-map'
+import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const tab = searchParams.get('tab') ?? 'pending'
+  const tab = (searchParams.get('tab') ?? 'pending') as ReservationTabId
 
-  // TODO: 여기서 실제 DB 조회로 교체
-  const dummy = [
-    {
-      id: '1',
-      publicCode: 'ABC123',
-      requesterName: '홍길동',
-      requesterPhone: '010-1234-5678',
-      organization: '서울시청',
-      startAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
-      endAt: new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString(),
-      purpose: '서버 장비 정기 점검',
-      destination: '서울특별시 강남구 테헤란로 123',
-      status: tab,
-      vehicleName: tab === 'need_car' ? null : '쏘나타 12가3456',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    },
-    {
-      id: '2',
-      publicCode: 'XYZ999',
-      requesterName: '김철수',
-      requesterPhone: '010-7777-8888',
-      organization: '구청',
-      startAt: new Date(Date.now() + 1000 * 60 * 60 * 2).toISOString(),
-      endAt: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
-      purpose: '회의 참석',
-      destination: '양평',
-      status: tab,
-      vehicleName: '카니발 88하7777',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    },
-  ]
+  const queryConfig = TAB_QUERY_MAP[tab]
+
+  if (!queryConfig) {
+    return NextResponse.json({ error: 'Invalid tab' }, { status: 400 })
+  }
+
+  const rows = await db
+    .select({
+      reservationId: reservations.id,
+      publicCode: reservations.publicCode,
+      status: reservations.status,
+      requesterName: reservations.requesterName,
+      requesterPhone: reservations.requesterPhone,
+      organization: reservations.organization,
+      purpose: reservations.purpose,
+      destination: reservations.destination,
+      startAt: reservations.startAt,
+      endAt: reservations.endAt,
+      createdAt: reservations.createdAt,
+
+      usageSessionId: usageSessions.id,
+      usageStatus: usageSessions.status,
+      approvedAt: usageSessions.approvedAt,
+      checkedOutAt: usageSessions.checkedOutAt,
+      returnedAt: usageSessions.returnedAt,
+      inspectedAt: usageSessions.inspectedAt,
+
+      vehicleId: vehicles.id,
+      vehicleName: vehicles.name,
+      vehicleNumber: vehicles.plateNumber,
+    })
+    .from(reservations)
+    .leftJoin(usageSessions, eq(usageSessions.reservationId, reservations.id))
+    .leftJoin(vehicles, eq(vehicles.id, usageSessions.vehicleId))
+    .where(queryConfig.where)
+    .orderBy(...queryConfig.orderBy)
 
   return NextResponse.json({
-    items: dummy,
+    items: rows,
   })
 }

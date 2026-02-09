@@ -7,3 +7,9 @@ export const RESERVATION_TABS = [
 ] as const
 
 export type ReservationTabId = (typeof RESERVATION_TABS)[number]['id']
+
+export const DEFAULT_RESERVATION_TAB: ReservationTabId = 'pending'
+
+export function isReservationTabId(value: string): value is ReservationTabId {
+  return RESERVATION_TABS.some(tab => tab.id === value)
+}

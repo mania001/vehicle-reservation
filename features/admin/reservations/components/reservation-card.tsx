@@ -1,10 +1,11 @@
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn, formatPhoneNumber } from '@/lib/utils'
 import { Calendar, PhoneCall, User } from 'lucide-react'
 import { AdminReservationListItem } from '../types/reservaiton-list-item'
 import { getReservationPeriod, getTimeAgo } from '@/lib/time'
 import { useRouter } from 'next/navigation'
+import { RESERVATION_TABS } from '../constants/reservation-tabs'
 
 type Props = {
   item: AdminReservationListItem
@@ -15,8 +16,10 @@ export default function ReservationCard({ item }: Props) {
   const timeAgo = getTimeAgo(item.createdAt)
   const { range, duration } = getReservationPeriod(item.startAt, item.endAt)
 
+  const tabLabel = RESERVATION_TABS.find(tab => tab.id === item.status)?.label || '알 수 없음'
+
   const handleCardClick = () => {
-    router.push(`/admin/reservations/${item.id}`)
+    router.push(`/admin/reservations/${item.reservationId}`)
   }
 
   return (
@@ -30,7 +33,7 @@ export default function ReservationCard({ item }: Props) {
       <div className="relative pointer-events-none flex justify-between items-start">
         <div className="flex gap-2">
           <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full">
-            승인 대기
+            {tabLabel}
           </span>
           <span className="px-3 py-1 bg-gray-50 text-gray-500 text-[10px] font-black rounded-full italic">
             # - {item.publicCode}
@@ -49,7 +52,7 @@ export default function ReservationCard({ item }: Props) {
             <span className="text-xs text-muted-foreground">{item.organization}</span>
           </h3>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
-            <PhoneCall size={12} strokeWidth={3} /> {item.requesterPhone}
+            <PhoneCall size={12} strokeWidth={3} /> {formatPhoneNumber(item.requesterPhone)}
           </p>
         </div>
       </div>
