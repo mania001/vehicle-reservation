@@ -6,6 +6,7 @@ export const usageStatusEnum = pgEnum('usage_status', [
   'scheduled', // 승인 완료, 사용 예정
   'checked_out', // 키 인수 완료, 사용 중
   'returned', // 정상 반납
+  'inspected', // 예약관리자 최종확정
   'no_show', // 노쇼 확정
   'cancelled', // 관리자에 의해 종료
 ])
@@ -50,6 +51,10 @@ export const usageSessions = pgTable('usage_sessions', {
   }),
 
   returnedAt: timestamp('returned_at', {
+    withTimezone: true,
+  }),
+
+  inspectedAt: timestamp('inspected_at', {
     withTimezone: true,
   }),
 
