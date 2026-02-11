@@ -11,7 +11,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { rejectReservation } from '../actions/reject-reservation'
 import { toast } from 'sonner'
 import { ApproveBottomDrawer } from './approve-bottom-drawer'
-import { useApproveReservationMutation } from '../hooks/use-approve-reservation-mutation'
+import { useApproveReservationMutation } from '../mutations/use-approve-reservation-mutation'
 
 type Props = {
   item: AdminReservationListItem
@@ -49,20 +49,12 @@ export default function ReservationCard({ item, currentTab }: Props) {
 
   const handleApprove = async (vehicleId: string | null) => {
     try {
-      // await approveReservation({
-      //   reservationId: item.reservationId,
-      //   vehicleId,
-      // })
-
       await approveMutation.mutateAsync({
         reservationId: item.reservationId,
         vehicleId,
       })
 
       toast.success(vehicleId ? '승인 + 배차 완료' : '승인 완료')
-
-      // qc.invalidateQueries({ queryKey: ['admin-reservations'] })
-      // qc.invalidateQueries({ queryKey: ['admin-reservation-counts'] })
     } catch (_) {
       toast.error('승인 처리 실패')
     }
