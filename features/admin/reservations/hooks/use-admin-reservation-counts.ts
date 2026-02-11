@@ -2,10 +2,11 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { ReservationCountsResponse } from '../types/reservaiton-list-item'
+import { adminReservationQueryKeys } from '../query-keys'
 
 export function useAdminReservationCounts() {
   return useQuery<ReservationCountsResponse>({
-    queryKey: ['admin-reservations-counts'],
+    queryKey: adminReservationQueryKeys.counts(),
     queryFn: async () => {
       const res = await fetch('/api/admin/reservations/counts')
       if (!res.ok) throw new Error('Failed to fetch reservation counts')

@@ -5,19 +5,20 @@ import { Calendar, Check, PhoneCall, User } from 'lucide-react'
 import { AdminReservationListItem } from '../types/reservaiton-list-item'
 import { getReservationPeriod, getTimeAgo } from '@/lib/time'
 import { useRouter } from 'next/navigation'
-import { RESERVATION_TABS } from '../constants/reservation-tabs'
+import { RESERVATION_TABS, ReservationTabId } from '../constants/reservation-tabs'
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { rejectReservation } from '../actions/reject-reservation'
 import { toast } from 'sonner'
 import { ApproveBottomDrawer } from './approve-bottom-drawer'
-import { approveReservation } from '../actions/approve-reservation'
+import { useApproveReservationMutation } from '../hooks/use-approve-reservation-mutation'
 
 type Props = {
   item: AdminReservationListItem
+  currentTab: ReservationTabId
 }
 
-export default function ReservationCard({ item }: Props) {
+export default function ReservationCard({ item, currentTab }: Props) {
   const router = useRouter()
   const timeAgo = getTimeAgo(item.createdAt)
   const { range, duration } = getReservationPeriod(item.startAt, item.endAt)
@@ -28,6 +29,8 @@ export default function ReservationCard({ item }: Props) {
 
   const qc = useQueryClient()
   const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const approveMutation = useApproveReservationMutation(currentTab)
 
   const handleReject = async () => {
     const ok = confirm('이 예약을 반려 처리할까요?')
@@ -46,15 +49,20 @@ export default function ReservationCard({ item }: Props) {
 
   const handleApprove = async (vehicleId: string | null) => {
     try {
-      await approveReservation({
+      // await approveReservation({
+      //   reservationId: item.reservationId,
+      //   vehicleId,
+      // })
+
+      await approveMutation.mutateAsync({
         reservationId: item.reservationId,
         vehicleId,
       })
 
       toast.success(vehicleId ? '승인 + 배차 완료' : '승인 완료')
 
-      qc.invalidateQueries({ queryKey: ['admin-reservations'] })
-      qc.invalidateQueries({ queryKey: ['admin-reservation-counts'] })
+      // qc.invalidateQueries({ queryKey: ['admin-reservations'] })
+      // qc.invalidateQueries({ queryKey: ['admin-reservation-counts'] })
     } catch (_) {
       toast.error('승인 처리 실패')
     }
