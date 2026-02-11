@@ -7,7 +7,6 @@ import { ReservationStatus } from '@/domains/reservation/reservation-status'
 import { ReserveFormValues } from '../hooks/use-reserve-form'
 import { reservationCoreSchema } from '@/domains/reservation/reservation.schema'
 import { ReservationCreateInput } from '@/domains/reservation/reservation.types'
-import { toUTC } from '@/lib/time'
 
 export async function createReservation(values: ReserveFormValues) {
   // 1️⃣ 검증
@@ -33,8 +32,8 @@ export async function createReservation(values: ReserveFormValues) {
       requesterPhone: data.phone,
       organization: data.organization,
 
-      startAt: toUTC(data.startAt),
-      endAt: toUTC(data.endAt),
+      startAt: data.startAt,
+      endAt: data.endAt,
       purpose: data.purpose,
       destination: data.destination,
       publicCode,

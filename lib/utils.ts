@@ -28,3 +28,16 @@ export const formatPhoneNumber = (phone: string | undefined | null) => {
   // 그 외에는 입력값 그대로 반환
   return phone
 }
+
+/**
+ * 텍스트를 클립보드에 복사합니다.
+ */
+export const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch (err) {
+    console.error('복사 실패:', err)
+    return false
+  }
+}
