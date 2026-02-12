@@ -36,6 +36,13 @@
       "when": 1770864683917,
       "tag": "0004_last_stick",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1770881833003,
+      "tag": "0005_slippery_franklin_storm",
+      "breakpoints": true
     }
   ]
 }
