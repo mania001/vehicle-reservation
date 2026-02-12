@@ -29,6 +29,13 @@
       "when": 1770705723781,
       "tag": "0003_aberrant_santa_claus",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1770864683917,
+      "tag": "0004_last_stick",
+      "breakpoints": true
     }
   ]
 }

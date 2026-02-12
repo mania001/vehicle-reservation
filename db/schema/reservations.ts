@@ -31,10 +31,18 @@ export const reservations = pgTable('reservations', {
 
   status: reservationStatusEnum('status').notNull().default('pending'),
 
-  // 취소 관련
+  /**
+   * 취소 관련 (cancelled 전용)
+   */
   cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
   cancelActorType: cancelActorTypeEnum('cancel_actor_type'),
   cancelReason: text('cancel_reason'),
+
+  /**
+   * 반려 관련 (rejected 전용)
+   */
+  rejectedAt: timestamp('rejected_at', { withTimezone: true }),
+  rejectedReason: text('rejected_reason'),
 
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 
