@@ -18,6 +18,12 @@ export type OptimisticTabMutationConfig<TabId extends string, ListItem, Payload,
   removeFromCurrentList?: boolean
 
   getInvalidateTabs?: (payload: Payload, currentTab: TabId) => TabId[]
+
+  /**
+   * 성공/실패 side effect (toast 등)
+   */
+  onSuccessSideEffect?: (result: Result, payload: Payload) => void
+  onErrorSideEffect?: (error: unknown, payload: Payload) => void
 }
 
 type CountsMap<TabId extends string> = Record<TabId, number>
@@ -35,6 +41,8 @@ export function useOptimisticTabMutation<TabId extends string, ListItem, Payload
     getNextTab,
     removeFromCurrentList = true,
     getInvalidateTabs,
+    onSuccessSideEffect,
+    onErrorSideEffect,
   } = config
 
   const qc = useQueryClient()
@@ -82,7 +90,7 @@ export function useOptimisticTabMutation<TabId extends string, ListItem, Payload
       }
     },
 
-    onError: (_err, _payload, ctx) => {
+    onError: (err, payload, ctx) => {
       if (ctx?.prevList) {
         qc.setQueryData(listQueryKey(currentTab), ctx.prevList)
       }
@@ -90,6 +98,12 @@ export function useOptimisticTabMutation<TabId extends string, ListItem, Payload
       if (ctx?.prevCounts) {
         qc.setQueryData(countsQueryKey, ctx.prevCounts)
       }
+
+      onErrorSideEffect?.(err, payload)
+    },
+
+    onSuccess: (result, payload) => {
+      onSuccessSideEffect?.(result, payload)
     },
 
     onSettled: (_data, _err, payload) => {

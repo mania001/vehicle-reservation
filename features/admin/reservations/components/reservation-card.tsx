@@ -48,16 +48,10 @@ export default function ReservationCard({ item, currentTab }: Props) {
   }
 
   const handleApprove = async (vehicleId: string | null) => {
-    try {
-      await approveMutation.mutateAsync({
-        reservationId: item.reservationId,
-        vehicleId,
-      })
-
-      toast.success(vehicleId ? '승인 + 배차 완료' : '승인 완료')
-    } catch (_) {
-      toast.error('승인 처리 실패')
-    }
+    await approveMutation.mutateAsync({
+      reservationId: item.reservationId,
+      vehicleId,
+    })
   }
 
   function openDrawerSafely() {

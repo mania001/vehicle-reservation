@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import { useOptimisticTabMutation } from '../../_shared/mutations/use-optimistic-tab-mutation'
 import { approveReservation, ApproveReservationPayload } from '../api/approve-reservatiton'
 import { ReservationTabId } from '../constants/reservation-tabs'
@@ -33,6 +34,14 @@ export function useApproveReservationMutation(currentTab: ReservationTabId) {
     getInvalidateTabs: (_payload, tab) => {
       const nextTab = getNextTabAfterApprove(tab)
       return nextTab ? [nextTab] : []
+    },
+
+    onSuccessSideEffect: (_result, payload) => {
+      toast.success(payload.vehicleId ? '승인 + 배차 완료' : '승인 완료')
+    },
+
+    onErrorSideEffect: () => {
+      toast.error('승인 처리 실패')
     },
   })
 }
