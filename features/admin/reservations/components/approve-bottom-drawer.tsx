@@ -13,22 +13,13 @@ import { VehicleSelectItem } from './vehicle-select-item'
 type Props = {
   open: boolean
   onOpenChange: (open: boolean) => void
-
-  reservationId: string
   startAt: string // ISO
   endAt: string // ISO
 
   onConfirm: (vehicleId: string | null) => Promise<void>
 }
 
-export function ApproveBottomDrawer({
-  open,
-  onOpenChange,
-  // reservationId,
-  startAt,
-  endAt,
-  onConfirm,
-}: Props) {
+export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConfirm }: Props) {
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)

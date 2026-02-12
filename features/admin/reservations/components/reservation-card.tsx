@@ -7,11 +7,10 @@ import { getReservationPeriod, getTimeAgo } from '@/lib/time'
 import { useRouter } from 'next/navigation'
 import { RESERVATION_TABS, ReservationTabId } from '../constants/reservation-tabs'
 import { useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { rejectReservation } from '../actions/reject-reservation'
-import { toast } from 'sonner'
 import { ApproveBottomDrawer } from './approve-bottom-drawer'
 import { useApproveReservationMutation } from '../mutations/use-approve-reservation-mutation'
+import { RejectBottomDrawer } from './reject-bottom-drawer'
+import { useRejectReservationMutation } from '../mutations/use-reject-reservation-mutation'
 
 type Props = {
   item: AdminReservationListItem
@@ -27,25 +26,11 @@ export default function ReservationCard({ item, currentTab }: Props) {
 
   const [isCopied, setIsCopied] = useState(false)
 
-  const qc = useQueryClient()
-  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [approveDrawerOpen, setApproveDrawerOpen] = useState(false)
+  const [rejectDrawerOpen, setRejectDrawerOpen] = useState(false)
 
   const approveMutation = useApproveReservationMutation(currentTab)
-
-  const handleReject = async () => {
-    const ok = confirm('이 예약을 반려 처리할까요?')
-    if (!ok) return
-
-    try {
-      await rejectReservation(item.reservationId)
-      toast.success('반려 처리 완료')
-
-      qc.invalidateQueries({ queryKey: ['admin-reservations'] })
-      qc.invalidateQueries({ queryKey: ['admin-reservation-counts'] })
-    } catch (_) {
-      toast.error('반려 처리 실패')
-    }
-  }
+  const rejectMutation = useRejectReservationMutation(currentTab)
 
   const handleApprove = async (vehicleId: string | null) => {
     await approveMutation.mutateAsync({
@@ -54,13 +39,21 @@ export default function ReservationCard({ item, currentTab }: Props) {
     })
   }
 
-  function openDrawerSafely() {
+  const handleReject = async (reason: string) => {
+    await rejectMutation.mutateAsync({
+      reservationId: item.reservationId,
+      reason,
+    })
+  }
+
+  function openDrawerSafely(type: 'approve' | 'reject' = 'approve') {
     // ✅ Drawer open 전에 focus 해제 (aria-hidden warning 해결)
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
     }
 
-    setDrawerOpen(true)
+    if (type === 'approve') setApproveDrawerOpen(true)
+    else setRejectDrawerOpen(true)
   }
 
   const handleCardClick = () => {
@@ -150,7 +143,7 @@ export default function ReservationCard({ item, currentTab }: Props) {
           <button
             onClick={e => {
               e.stopPropagation()
-              openDrawerSafely()
+              openDrawerSafely('approve')
             }}
             className="flex-1 py-4 bg-primary text-white rounded-2xl font-bold text-sm shadow-lg shadow-blue-100 transition-transform active:scale-95"
           >
@@ -159,7 +152,7 @@ export default function ReservationCard({ item, currentTab }: Props) {
           <button
             onClick={e => {
               e.stopPropagation()
-              handleReject()
+              openDrawerSafely('reject')
             }}
             className="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold text-sm transition-transform active:scale-95"
           >
@@ -169,12 +162,17 @@ export default function ReservationCard({ item, currentTab }: Props) {
       </div>
 
       <ApproveBottomDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        reservationId={item.reservationId}
+        open={approveDrawerOpen}
+        onOpenChange={setApproveDrawerOpen}
         startAt={item.startAt}
         endAt={item.endAt}
         onConfirm={handleApprove}
+      />
+
+      <RejectBottomDrawer
+        open={rejectDrawerOpen}
+        onOpenChange={setRejectDrawerOpen}
+        onConfirm={handleReject}
       />
     </>
   )

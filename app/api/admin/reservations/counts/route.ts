@@ -13,7 +13,7 @@ export async function GET() {
       )`,
       return_check: sql<number>`count(*) filter (where ${usageSessions.status} = 'returned')`,
       issue: sql<number>`count(*) filter (
-        where ${reservations.status} in ('cancelled', 'rejected')
+        where ${reservations.status} in ('cancelled')
         or ${usageSessions.status} in ('no_show', 'cancelled')
       )`,
       // done: sql<number>`count(*) filter (where ${usageSessions.status} = 'inspected')`,

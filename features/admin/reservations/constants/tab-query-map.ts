@@ -31,7 +31,6 @@ export const TAB_QUERY_MAP: Record<
   issue: {
     where: or(
       eq(reservations.status, 'cancelled'),
-      eq(reservations.status, 'rejected'),
       eq(usageSessions.status, 'no_show'),
       eq(usageSessions.status, 'cancelled'),
     )!,
@@ -39,7 +38,7 @@ export const TAB_QUERY_MAP: Record<
   },
 
   done: {
-    where: eq(usageSessions.status, 'inspected'),
+    where: or(eq(reservations.status, 'rejected'), eq(usageSessions.status, 'inspected'))!,
     orderBy: [desc(usageSessions.inspectedAt), desc(reservations.endAt)],
   },
 }
