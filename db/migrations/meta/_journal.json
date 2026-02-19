@@ -43,6 +43,13 @@
       "when": 1770881833003,
       "tag": "0005_slippery_franklin_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771469325677,
+      "tag": "0006_odd_stepford_cuckoos",
+      "breakpoints": true
     }
   ]
 }

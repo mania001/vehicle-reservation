@@ -5,6 +5,7 @@ export const reservationStatusEnum = pgEnum('reservation_status', [
   'approved',
   'rejected',
   'cancelled',
+  'closed',
 ])
 
 export const cancelActorTypeEnum = pgEnum('cancel_actor_type', ['user', 'admin', 'system'])

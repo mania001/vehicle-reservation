@@ -1,5 +1,6 @@
 import { db } from '@/db'
 import { reservations, usageSessions, vehicles } from '@/db/schema'
+import { ok } from '@/features/admin/_shared/api/api-response'
 import { ReservationTabId } from '@/features/admin/reservations/constants/reservation-tabs'
 import { TAB_QUERY_MAP } from '@/features/admin/reservations/constants/tab-query-map'
 import { eq } from 'drizzle-orm'
@@ -46,7 +47,9 @@ export async function GET(req: Request) {
     .where(queryConfig.where)
     .orderBy(...queryConfig.orderBy)
 
-  return NextResponse.json({
-    items: rows,
-  })
+  return NextResponse.json(
+    ok({
+      items: rows,
+    }),
+  )
 }

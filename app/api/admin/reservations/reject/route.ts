@@ -2,6 +2,7 @@ import { db } from '@/db'
 import { reservations } from '@/db/schema'
 import { ReservationStatus } from '@/domains/reservation/reservation-status'
 import { fail, ok } from '@/features/admin/_shared/api/api-response'
+import { withAudit } from '@/features/admin/_shared/audit/with-audit'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
@@ -40,22 +41,44 @@ export async function POST(req: Request) {
     })
   }
 
-  await db
-    .update(reservations)
-    .set({
-      status: ReservationStatus.REJECTED,
-      rejectedAt: new Date(),
-      rejectedReason: body.reason.trim(),
-      updatedAt: new Date(),
-    })
-    .where(eq(reservations.id, reservationId))
+  const now = new Date()
+  const reson = body.reason.trim()
 
-  /**
-   * TODO: audit_logs insert
-   * - action: reservation.rejected
-   * - actorAdminId: from session
-   * - payload: { reservationId, reason }
-   */
+  // actorType: 'system', actorId: null,  ->  actorType: 'admin', actorId: auth.admin.id, 로 변경 필요
+  await withAudit(
+    req,
+    {
+      reservationId: reservation.id,
+      action: 'reservation.reject',
+      entityType: 'reservation',
+      entityId: reservation.id,
+      actorType: 'system',
+      actorId: null,
+      message: reson,
+      prevData: {
+        status: reservation.status,
+      },
+      nextData: {
+        status: ReservationStatus.REJECTED,
+        rejectedReason: reson,
+      },
+      // metadata: {
+      //   ip: req.headers.get('x-forwarded-for') ?? undefined,
+      //   userAgent: req.headers.get('user-agent') ?? undefined,
+      // },
+    },
+    async () => {
+      await db
+        .update(reservations)
+        .set({
+          status: ReservationStatus.REJECTED,
+          rejectedAt: now,
+          rejectedReason: reson,
+          updatedAt: now,
+        })
+        .where(eq(reservations.id, reservationId))
+    },
+  )
 
   return NextResponse.json(ok({ reservationId: reservation.id }))
 }

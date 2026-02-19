@@ -2,6 +2,8 @@ import { db } from '@/db'
 import { reservations, usageSessions } from '@/db/schema'
 import { ReservationStatus } from '@/domains/reservation/reservation-status'
 import { UsageStatus } from '@/domains/usage-session/usage-status'
+import { fail, ok } from '@/features/admin/_shared/api/api-response'
+import { withAudit } from '@/features/admin/_shared/audit/with-audit'
 import { eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
@@ -12,10 +14,9 @@ export async function POST(req: Request) {
   const vehicleId = body?.vehicleId as string | null | undefined
 
   if (!reservationId) {
-    return NextResponse.json(
-      { success: false, error: 'reservationId is required' },
-      { status: 400 },
-    )
+    return NextResponse.json(fail('VALIDATION_ERROR', 'reservationId가 필요합니다.'), {
+      status: 400,
+    })
   }
 
   const reservation = await db.query.reservations.findFirst({
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
   })
 
   if (!reservation) {
-    return NextResponse.json({ success: false, error: 'Reservation not found' }, { status: 404 })
+    return NextResponse.json(fail('NOT_FOUND', '예약을 찾을 수 없습니다.'), { status: 404 })
   }
 
   // if (reservation.status !== 'pending') {
@@ -33,38 +34,60 @@ export async function POST(req: Request) {
   //   )
   // }
 
-  await db.transaction(async tx => {
-    await tx
-      .update(reservations)
-      .set({
+  const now = new Date()
+
+  await withAudit(
+    req,
+    {
+      reservationId: reservationId,
+      action: 'reservation.approve',
+      entityType: 'reservation',
+      entityId: reservationId,
+      actorType: 'system',
+      actorId: null,
+      message: '예약이 승인되었습니다.',
+      prevData: {
+        status: reservation.status,
+      },
+      nextData: {
         status: ReservationStatus.APPROVED,
-        updatedAt: new Date(),
-      })
-      .where(eq(reservations.id, reservationId))
+      },
+    },
+    async () => {
+      await db.transaction(async tx => {
+        await tx
+          .update(reservations)
+          .set({
+            status: ReservationStatus.APPROVED,
+            updatedAt: now,
+          })
+          .where(eq(reservations.id, reservationId))
 
-    const existing = await tx.query.usageSessions.findFirst({
-      where: eq(usageSessions.reservationId, reservationId),
-    })
-
-    if (!existing) {
-      await tx.insert(usageSessions).values({
-        reservationId,
-        vehicleId,
-        status: UsageStatus.SCHEDULED,
-        approvedAt: new Date(),
-        scheduledStartAt: reservation.startAt,
-        scheduledEndAt: reservation.endAt,
-      })
-    } else {
-      await tx
-        .update(usageSessions)
-        .set({
-          vehicleId,
-          updatedAt: new Date(),
+        const existing = await tx.query.usageSessions.findFirst({
+          where: eq(usageSessions.reservationId, reservationId),
         })
-        .where(eq(usageSessions.reservationId, reservationId))
-    }
-  })
 
-  return NextResponse.json({ success: true })
+        if (!existing) {
+          await tx.insert(usageSessions).values({
+            reservationId,
+            vehicleId,
+            status: UsageStatus.SCHEDULED,
+            approvedAt: now,
+            scheduledStartAt: reservation.startAt,
+            scheduledEndAt: reservation.endAt,
+          })
+        } else {
+          await tx
+            .update(usageSessions)
+            .set({
+              vehicleId,
+              updatedAt: now,
+            })
+            .where(eq(usageSessions.reservationId, reservationId))
+        }
+      })
+    },
+  )
+
+  return NextResponse.json(ok({ reservationId }))
 }
