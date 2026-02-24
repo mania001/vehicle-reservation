@@ -1,6 +1,6 @@
 import { db } from '@/db'
 import { reservations, usageSessions, vehicles } from '@/db/schema'
-import { ok } from '@/features/admin/_shared/api/api-response'
+import { fail, ok } from '@/features/admin/_shared/api/api-response'
 import { ReservationTabId } from '@/features/admin/reservations/constants/reservation-tabs'
 import { TAB_QUERY_MAP } from '@/features/admin/reservations/constants/tab-query-map'
 import { eq } from 'drizzle-orm'
@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const queryConfig = TAB_QUERY_MAP[tab]
 
   if (!queryConfig) {
-    return NextResponse.json({ error: 'Invalid tab' }, { status: 400 })
+    return NextResponse.json(fail('NOT_FOUND', 'Invalid tab'), { status: 400 })
   }
 
   const rows = await db
@@ -21,6 +21,7 @@ export async function GET(req: Request) {
       reservationId: reservations.id,
       publicCode: reservations.publicCode,
       status: reservations.status,
+      reservationStatus: reservations.status,
       requesterName: reservations.requesterName,
       requesterPhone: reservations.requesterPhone,
       organization: reservations.organization,

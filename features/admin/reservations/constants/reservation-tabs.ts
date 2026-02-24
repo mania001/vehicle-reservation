@@ -1,7 +1,7 @@
 export const RESERVATION_TABS = [
-  { id: 'pending', label: '승인대기' },
-  { id: 'need_car', label: '배차필요' },
-  { id: 'return_check', label: '반납확인' },
+  { id: 'pending', label: '예약' },
+  { id: 'need_car', label: '배차' },
+  { id: 'return_check', label: '반납체크' },
   { id: 'issue', label: '취소/이슈' },
   { id: 'done', label: '완료' },
 ] as const

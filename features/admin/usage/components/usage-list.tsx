@@ -1,29 +1,27 @@
 'use client'
 
-import PullToRefresh from 'react-simple-pull-to-refresh'
 import { useQueryClient } from '@tanstack/react-query'
-import { ReservationTabId } from '../constants/reservation-tabs'
-// import { AdminReservationListItem } from '../types/reservaiton-list-item'
-// import ReservationCard from './reservation-card'
-import { adminReservationQueryKeys } from '../query-keys'
+import { UsageTabId } from '../constants/usage-tabs'
+import { adminUsageQueryKeys } from '../query-keys'
+import PullToRefresh from 'react-simple-pull-to-refresh'
 import { Loader2 } from 'lucide-react'
-import { AdminBookingCard } from '../../_shared/components/admin-booking-card'
 import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
+import { AdminBookingCard } from '../../_shared/components/admin-booking-card'
 import { useAdminActionDispatcher } from '../../_shared/actions/use-admin-action-dispatcher'
-import { ReservationActionDispatcher } from './reservation-action-dispatcher'
+import { UsageActionDispatcher } from './usage-action-dispatcher'
 
 type Props = {
   items: AdminBookingItem[]
   emptyMessage: string
-  currentTab: ReservationTabId
+  currentTab: UsageTabId
 }
 
-export default function ReservationList({ items, emptyMessage, currentTab }: Props) {
+export default function UsageList({ items, emptyMessage, currentTab }: Props) {
   const qc = useQueryClient()
 
   async function handleRefresh() {
-    await qc.invalidateQueries({ queryKey: adminReservationQueryKeys.list(currentTab) })
-    await qc.invalidateQueries({ queryKey: adminReservationQueryKeys.counts() })
+    await qc.invalidateQueries({ queryKey: adminUsageQueryKeys.list(currentTab) })
+    await qc.invalidateQueries({ queryKey: adminUsageQueryKeys.counts() })
   }
 
   const { selectedItem, pendingAction, dispatch, clear } = useAdminActionDispatcher()
@@ -56,10 +54,9 @@ export default function ReservationList({ items, emptyMessage, currentTab }: Pro
       <div className="p-4 space-y-6">
         {items.map(item => (
           <AdminBookingCard key={item.reservationId} item={item} onAction={dispatch} />
-          // <ReservationCard key={item.reservationId} item={item} currentTab={currentTab} />
         ))}
 
-        <ReservationActionDispatcher
+        <UsageActionDispatcher
           action={pendingAction}
           item={selectedItem}
           clear={clear}

@@ -11,10 +11,11 @@ import { ApproveBottomDrawer } from './approve-bottom-drawer'
 import { useApproveReservationMutation } from '../mutations/use-approve-reservation-mutation'
 import { RejectBottomDrawer } from './reject-bottom-drawer'
 import { useRejectReservationMutation } from '../mutations/use-reject-reservation-mutation'
+import { UsageTabId } from '../../usage/constants/usage-tabs'
 
 type Props = {
   item: AdminReservationListItem
-  currentTab: ReservationTabId
+  currentTab: ReservationTabId | UsageTabId
 }
 
 export default function ReservationCard({ item, currentTab }: Props) {
@@ -29,8 +30,8 @@ export default function ReservationCard({ item, currentTab }: Props) {
   const [approveDrawerOpen, setApproveDrawerOpen] = useState(false)
   const [rejectDrawerOpen, setRejectDrawerOpen] = useState(false)
 
-  const approveMutation = useApproveReservationMutation(currentTab)
-  const rejectMutation = useRejectReservationMutation(currentTab)
+  const approveMutation = useApproveReservationMutation(currentTab as ReservationTabId)
+  const rejectMutation = useRejectReservationMutation(currentTab as ReservationTabId)
 
   const handleApprove = async (vehicleId: string | null) => {
     await approveMutation.mutateAsync({

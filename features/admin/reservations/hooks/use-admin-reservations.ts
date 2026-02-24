@@ -9,9 +9,10 @@ export function useAdminReservations(tab: ReservationTabId) {
   return useQuery({
     queryKey: adminReservationQueryKeys.list(tab),
     queryFn: () => fetchReservations(tab),
-    staleTime: 0, // 관리자 화면은 staleTime 길게 두면 안됨
-    refetchInterval: 10000, // ✅ 10초마다 자동 갱신
+    staleTime: 1000 * 30,
+    refetchInterval: 1000 * 30, // ✅ 30초마다 자동 갱신
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
+    refetchIntervalInBackground: false,
   })
 }

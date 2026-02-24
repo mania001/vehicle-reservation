@@ -45,6 +45,10 @@ function ReservationTabContent({ tab }: { tab: ReservationTabId }) {
   }
 
   return (
-    <ReservationList items={data?.items ?? []} currentTab={tab} emptyMessage="예약이 없습니다." />
+    <ReservationList
+      items={data?.items ?? []}
+      currentTab={tab}
+      emptyMessage="해당 내용이 없습니다."
+    />
   )
 }
