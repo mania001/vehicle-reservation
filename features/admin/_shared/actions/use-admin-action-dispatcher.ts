@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { AdminBookingItem } from '../types/admin-booking-item'
-import { AdminAction } from './admin-actions'
+import { AdminAction } from '../model/admin-state-machine'
 
 export function useAdminActionDispatcher() {
   const [selectedItem, setSelectedItem] = useState<AdminBookingItem | null>(null)

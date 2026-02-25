@@ -56,7 +56,6 @@ export default function ReservationList({ items, emptyMessage, currentTab }: Pro
       <div className="p-4 space-y-6">
         {items.map(item => (
           <AdminBookingCard key={item.reservationId} item={item} onAction={dispatch} />
-          // <ReservationCard key={item.reservationId} item={item} currentTab={currentTab} />
         ))}
 
         <ReservationActionDispatcher

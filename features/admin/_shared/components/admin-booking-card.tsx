@@ -2,14 +2,17 @@
 
 import { useRouter } from 'next/navigation'
 import { AdminBookingItem } from '../types/admin-booking-item'
-import { resolveAdminDisplayStatus } from '../status/resolve-admin-display-status'
-import { ADMIN_ACTION_MAP, ADMIN_BADGE_MAP } from '../status/admin-status-ui'
 import { getReservationPeriod, getTimeAgo } from '@/lib/time'
 import { useState } from 'react'
 import { cn, copyToClipboard, formatPhoneNumber } from '@/lib/utils'
 import { Calendar, Check, PhoneCall, User } from 'lucide-react'
-import { AdminAction } from '../actions/admin-actions'
 import { ADMIN_ACTION_UI_MAP } from '../status/admin-action-ui'
+import {
+  AdminAction,
+  AdminDomainState,
+  getAvailableActions,
+  getBadge,
+} from '../model/admin-state-machine'
 
 type Props = {
   item: AdminBookingItem
@@ -17,17 +20,15 @@ type Props = {
 }
 
 export function AdminBookingCard({ item, onAction }: Props) {
-  const router = useRouter()
-
-  const displayStatus = resolveAdminDisplayStatus({
+  const domainState = {
     reservationStatus: item.reservationStatus,
     usageStatus: item.usageStatus,
-  })
+  } as AdminDomainState
 
-  console.log(item.reservationStatus, item.usageStatus, displayStatus)
+  const router = useRouter()
 
-  const badge = ADMIN_BADGE_MAP[displayStatus]
-  const actions = ADMIN_ACTION_MAP[displayStatus]
+  const badge = getBadge(domainState)
+  const actions = getAvailableActions(domainState)
 
   const timeAgo = getTimeAgo(item.createdAt)
   const { range, duration } = getReservationPeriod(item.startAt, item.endAt)
@@ -49,11 +50,11 @@ export function AdminBookingCard({ item, onAction }: Props) {
 
   return (
     <div
-      className="bg-white border rounded-2xl p-4 shadow-sm space-y-4 cursor-pointer"
+      className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-4 transition-all hover:shadow-md"
       onClick={() => router.push(`/admin/reservations/${item.reservationId}`)}
     >
       {/* 상단 */}
-      <div className="flex justify-between items-start">
+      <div className="relative flex justify-between items-start">
         <div className="flex gap-2">
           <span className={cn('px-3 py-1 text-[10px] font-black rounded-full', badge.className)}>
             {badge.label}
@@ -126,7 +127,7 @@ export function AdminBookingCard({ item, onAction }: Props) {
                   onAction(actionKey, item)
                 }}
                 className={`
-            flex-1 py-4 rounded-2xl font-bold text-sm
+            flex-1 py-4 rounded-2xl font-bold text-sm transition-transform active:scale-95
             ${ui.className}
           `}
               >

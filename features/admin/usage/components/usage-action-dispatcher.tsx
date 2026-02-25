@@ -1,11 +1,10 @@
 'use client'
 
 import { toast } from 'sonner'
-import { AdminAction } from '../../_shared/actions/admin-actions'
 import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 import { UsageTabId } from '../constants/usage-tabs'
-import { canExecuteUsageAction } from '../state-machine'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { AdminAction, getTransition } from '../../_shared/model/admin-state-machine'
 
 type Props = {
   action: AdminAction | null
@@ -17,24 +16,55 @@ type Props = {
 export function UsageActionDispatcher({ action, item, clear }: Props) {
   const [drawer, setDrawer] = useState<AdminAction | null>(null)
 
-  if (!action || !item) return null
+  // ✅ transition은 안전하게 계산
+  const transition =
+    action && item
+      ? getTransition(
+          {
+            reservationStatus: item.reservationStatus,
+            usageStatus: item.usageStatus,
+          },
+          action,
+        )
+      : null
 
-  // 🔥 상태 전이 1차 검증
-  if (!canExecuteUsageAction(item, action)) {
-    toast.error('현재 상태에서 실행할 수 없는 작업입니다.')
-    clear()
-    return null
-  }
+  // ✅ Hook은 항상 호출된다 (조건문 안 아님)
+  useEffect(() => {
+    if (!action || !item) return
 
-  // Drawer 필요한 액션 결정
-  if (action === 'check_out' || action === 'mark_returned' || action === 'inspect') {
-    if (drawer !== action) {
+    if (!transition) {
+      toast.error('현재 상태에서 실행할 수 없는 작업입니다.')
+      clear()
+      return
+    }
+
+    if (transition.requiresDrawer) {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
       setDrawer(action)
+    } else {
+      executeDirectAction(action)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [action])
+
+  async function executeDirectAction(action: AdminAction) {
+    try {
+      switch (action) {
+        default:
+          break
+      }
+    } finally {
+      clear()
     }
   }
 
+  if (!action || !item) return null
+
   return (
     <>
+      {drawer === 'check_out' && <div>체크아웃 드로어</div>}
       {/* {drawer === 'check_out' && (
         <CheckOutBottomDrawer
           open

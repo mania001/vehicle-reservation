@@ -3,6 +3,7 @@ export const ReservationStatus = {
   APPROVED: 'approved',
   REJECTED: 'rejected',
   CANCELLED: 'cancelled',
+  CLOSED: 'closed',
 } as const
 
 export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]

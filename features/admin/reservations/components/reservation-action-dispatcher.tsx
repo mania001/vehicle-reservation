@@ -1,15 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import { AdminAction } from '../../_shared/actions/admin-actions'
+import { useEffect, useState } from 'react'
 import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 import { ReservationTabId } from '../constants/reservation-tabs'
 import { useApproveReservationMutation } from '../mutations/use-approve-reservation-mutation'
 import { useRejectReservationMutation } from '../mutations/use-reject-reservation-mutation'
-import { canExecuteReservationAction } from '../state-machine'
 import { toast } from 'sonner'
 import { ApproveBottomDrawer } from './approve-bottom-drawer'
 import { RejectBottomDrawer } from './reject-bottom-drawer'
+import { AdminAction, getTransition } from '../../_shared/model/admin-state-machine'
 
 type Props = {
   action: AdminAction | null
@@ -24,21 +23,51 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
   const approveMutation = useApproveReservationMutation(currentTab)
   const rejectMutation = useRejectReservationMutation(currentTab)
 
-  if (!action || !item) return null
+  // ✅ transition은 안전하게 계산
+  const transition =
+    action && item
+      ? getTransition(
+          {
+            reservationStatus: item.reservationStatus,
+            usageStatus: item.usageStatus,
+          },
+          action,
+        )
+      : null
 
-  // 🔥 1차 상태 검증
-  if (!canExecuteReservationAction(item, action)) {
-    toast.error('현재 상태에서 실행할 수 없는 작업입니다.')
-    clear()
-    return null
-  }
+  // ✅ Hook은 항상 호출된다 (조건문 안 아님)
+  useEffect(() => {
+    if (!action || !item) return
 
-  // Drawer 필요한 액션 분리
-  if (action === 'approve' || action === 'reject') {
-    if (drawer !== action) {
+    if (!transition) {
+      toast.error('현재 상태에서 실행할 수 없는 작업입니다.')
+      clear()
+      return
+    }
+
+    if (transition.requiresDrawer) {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
       setDrawer(action)
+    } else {
+      executeDirectAction(action)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [action])
+
+  async function executeDirectAction(action: AdminAction) {
+    try {
+      switch (action) {
+        default:
+          break
+      }
+    } finally {
+      clear()
     }
   }
+
+  if (!action || !item) return null
 
   return (
     <>

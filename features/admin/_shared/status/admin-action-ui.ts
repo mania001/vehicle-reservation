@@ -1,4 +1,4 @@
-import { AdminAction } from '../actions/admin-actions'
+import { AdminAction } from '../model/admin-state-machine'
 
 export type AdminActionUI = {
   action: AdminAction
@@ -9,13 +9,13 @@ export type AdminActionUI = {
 export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
   approve: {
     action: 'approve',
-    label: '승인',
-    className: 'bg-blue-600 text-white',
+    label: '승인 / 배차',
+    className: ' bg-primary text-white',
   },
   reject: {
     action: 'reject',
     label: '거절',
-    className: 'bg-red-500 text-white',
+    className: 'bg-gray-100 text-gray-500',
   },
   check_out: {
     action: 'check_out',

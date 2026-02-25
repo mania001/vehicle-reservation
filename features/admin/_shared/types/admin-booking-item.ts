@@ -1,16 +1,12 @@
+import { ReservationStatus } from '@/domains/reservation/reservation-status'
+import { UsageStatus } from '@/domains/usage-session/usage-status'
+
 export type AdminBookingItem = {
   reservationId: string
   publicCode: string
 
-  reservationStatus: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'closed'
-  usageStatus:
-    | 'scheduled'
-    | 'checked_out'
-    | 'returned'
-    | 'inspected'
-    | 'no_show'
-    | 'cancelled'
-    | null
+  reservationStatus: ReservationStatus
+  usageStatus: UsageStatus | null
 
   requesterName: string
   organization: string | null
