@@ -4,6 +4,11 @@ import { UsageStatus } from '@/domains/usage-session/usage-status'
 export type AdminDomainState = {
   reservationStatus: ReservationStatus
   usageStatus: UsageStatus | null
+  vehicle?: {
+    id: string
+    name: string
+    plateNumber: string
+  }
 }
 
 // ----------------------------------
@@ -29,19 +34,21 @@ export type AdminAction =
   | 'check_out'
   | 'mark_returned'
   | 'inspect'
+  | 'no_show'
 
 // ----------------------------------
 // 3️⃣ displayStatus 파생 로직
 // ----------------------------------
 export function deriveDisplayStatus(state: AdminDomainState): AdminDisplayStatus {
-  const { reservationStatus, usageStatus } = state
+  const { reservationStatus, usageStatus, vehicle } = state
 
   if (reservationStatus === 'pending') return 'pending'
 
   if (reservationStatus === 'rejected') return 'completed'
   if (reservationStatus === 'cancelled') return 'issue'
 
-  if (reservationStatus === 'approved' && !usageStatus) return 'need_car'
+  if (reservationStatus === 'approved' && usageStatus === 'scheduled' && vehicle == null)
+    return 'need_car'
 
   if (usageStatus === 'scheduled') return 'key_out'
   if (usageStatus === 'checked_out') return 'driving'
@@ -69,7 +76,7 @@ export const ADMIN_BADGE_MAP: Record<AdminDisplayStatus, { label: string; classN
 // 5️⃣ 상태 전이 정의 (진짜 상태머신)
 // ----------------------------------
 type Transition = {
-  next: AdminDisplayStatus
+  next?: AdminDisplayStatus
   requiresDrawer?: boolean
 }
 
@@ -78,16 +85,18 @@ export const ADMIN_STATE_MACHINE: Record<
   Partial<Record<AdminAction, Transition>>
 > = {
   pending: {
-    approve: { next: 'need_car', requiresDrawer: true },
-    reject: { next: 'issue', requiresDrawer: true },
+    approve: { requiresDrawer: true },
+    reject: { next: 'completed', requiresDrawer: true },
   },
 
   need_car: {
     assign_vehicle: { next: 'key_out', requiresDrawer: true },
+    reject: { next: 'completed', requiresDrawer: true },
   },
 
   key_out: {
-    check_out: { next: 'driving' },
+    check_out: { next: 'driving', requiresDrawer: true },
+    no_show: { next: 'issue', requiresDrawer: true }, // 배차 드로어 다시 열기 (차량 변경)
   },
 
   driving: {

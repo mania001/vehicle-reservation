@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation'
 import { AdminBookingItem } from '../types/admin-booking-item'
-import { getReservationPeriod, getTimeAgo } from '@/lib/time'
+import { getTimeAgo } from '@/lib/time'
 import { useState } from 'react'
-import { cn, copyToClipboard, formatPhoneNumber } from '@/lib/utils'
-import { Calendar, Check, PhoneCall, User } from 'lucide-react'
+import { cn, copyToClipboard } from '@/lib/utils'
+import { Check } from 'lucide-react'
 import { ADMIN_ACTION_UI_MAP } from '../status/admin-action-ui'
 import {
   AdminAction,
@@ -13,6 +13,8 @@ import {
   getAvailableActions,
   getBadge,
 } from '../model/admin-state-machine'
+import { UserInformation } from './user-information'
+import { ReservationPeriod } from './reservation-period'
 
 type Props = {
   item: AdminBookingItem
@@ -23,6 +25,7 @@ export function AdminBookingCard({ item, onAction }: Props) {
   const domainState = {
     reservationStatus: item.reservationStatus,
     usageStatus: item.usageStatus,
+    vehicle: item.vehicle,
   } as AdminDomainState
 
   const router = useRouter()
@@ -31,7 +34,6 @@ export function AdminBookingCard({ item, onAction }: Props) {
   const actions = getAvailableActions(domainState)
 
   const timeAgo = getTimeAgo(item.createdAt)
-  const { range, duration } = getReservationPeriod(item.startAt, item.endAt)
 
   const [isCopied, setIsCopied] = useState(false)
 
@@ -77,33 +79,19 @@ export function AdminBookingCard({ item, onAction }: Props) {
         <p className="text-[10px] text-gray-300">{timeAgo}</p>
       </div>
 
-      {/* 사용자 */}
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center">
-          <User size={24} className="text-gray-400" />
-        </div>
-
-        <div>
-          <h3 className="font-bold">
-            {item.requesterName}{' '}
-            <span className="text-xs text-muted-foreground">{item.organization}</span>
-          </h3>
-
-          <a
-            href={`tel:${item.requesterPhone}`}
-            onClick={e => e.stopPropagation()}
-            className="text-sm text-muted-foreground flex items-center gap-2"
-          >
-            <PhoneCall size={12} /> {formatPhoneNumber(item.requesterPhone)}
-          </a>
-        </div>
+      {/* 사용자  / 차량 */}
+      <div className="flex justify-between">
+        <UserInformation item={item} />
+        {item.vehicle && (
+          <div className="flex flex-col items-center justify-center text-xs text-slate-600">
+            <div>{item.vehicle.name}</div>
+            <div>({item.vehicle.plateNumber})</div>
+          </div>
+        )}
       </div>
 
       {/* 일정 */}
-      <div className="text-xs text-center text-slate-500">
-        <Calendar size={12} className="inline mr-1" />
-        {range} ({duration})
-      </div>
+      <ReservationPeriod item={item} />
 
       {/* 목적 */}
       <div className="bg-slate-50 rounded-2xl p-4">
@@ -126,10 +114,10 @@ export function AdminBookingCard({ item, onAction }: Props) {
                   e.stopPropagation()
                   onAction(actionKey, item)
                 }}
-                className={`
-            flex-1 py-4 rounded-2xl font-bold text-sm transition-transform active:scale-95
-            ${ui.className}
-          `}
+                className={cn(
+                  'flex-1 py-4 rounded-2xl font-bold text-sm transition-transform active:scale-95',
+                  ui.className,
+                )}
               >
                 {ui.label}
               </button>

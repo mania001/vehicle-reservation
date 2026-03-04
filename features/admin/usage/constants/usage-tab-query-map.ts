@@ -23,6 +23,7 @@ export const USAGE_TAB_QUERY_MAP: Record<
     where: and(
       eq(reservations.status, 'approved'),
       isNotNull(usageSessions.id),
+      isNotNull(usageSessions.vehicleId),
       eq(usageSessions.status, 'scheduled'),
     )!,
     orderBy: [asc(reservations.startAt)],

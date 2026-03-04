@@ -6,6 +6,7 @@ export type AdminBookingItem = {
   publicCode: string
 
   reservationStatus: ReservationStatus
+  usageSessionId: string
   usageStatus: UsageStatus | null
 
   requesterName: string
@@ -19,8 +20,11 @@ export type AdminBookingItem = {
   endAt: string
 
   vehicle?: {
+    id: string
     name: string
     plateNumber: string
+    fuelLevel?: string
+    fuelType?: string
   } | null
 
   createdAt: string

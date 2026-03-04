@@ -17,9 +17,20 @@ type Props = {
   endAt: string // ISO
 
   onConfirm: (vehicleId: string | null) => Promise<void>
+
+  type?: 'approve' | 'assign_vehicle' // approve는 차량 선택이 선택적, assign_vehicle은 필수
+  required?: boolean
 }
 
-export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConfirm }: Props) {
+export function ApproveBottomDrawer({
+  open,
+  onOpenChange,
+  startAt,
+  endAt,
+  onConfirm,
+  type = 'approve',
+  required = false,
+}: Props) {
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -31,6 +42,10 @@ export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConf
     setLoading(true)
 
     try {
+      if (required && !selectedVehicleId) {
+        setError('차량을 선택해주세요.')
+        return
+      }
       await onConfirm(selectedVehicleId)
       onOpenChange(false)
     } catch (err) {
@@ -45,7 +60,7 @@ export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConf
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[85vh] px-4 pb-8">
         <DrawerHeader>
-          <DrawerTitle>예약 승인 / 배차</DrawerTitle>
+          <DrawerTitle>{type === 'approve' ? '예약 승인 / 배차' : '차량 배차'}</DrawerTitle>
           <DrawerDescription>
             예약 시간에 사용 가능한 차량만 추천 목록으로 표시됩니다.
           </DrawerDescription>
@@ -74,9 +89,11 @@ export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConf
 
         {error && <div className="text-sm text-red-500">{error}</div>}
 
-        <p className="mt-3 text-xs text-muted-foreground">
-          * 차량을 선택하지 않고 승인할 수도 있습니다. (배차는 이후 가능)
-        </p>
+        {!required && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            * 차량을 선택하지 않고 승인할 수도 있습니다. (배차는 이후 가능)
+          </p>
+        )}
 
         <div className="flex gap-2 pt-2">
           <Button
@@ -90,7 +107,7 @@ export function ApproveBottomDrawer({ open, onOpenChange, startAt, endAt, onConf
           </Button>
 
           <Button type="button" className="flex-1" onClick={handleConfirm} disabled={loading}>
-            {loading ? '처리 중...' : '승인 완료'}
+            {loading ? '처리 중...' : type === 'approve' ? '승인 완료' : '차량 배차 완료'}
           </Button>
         </div>
       </DrawerContent>

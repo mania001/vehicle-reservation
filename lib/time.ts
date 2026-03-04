@@ -1,4 +1,4 @@
-import { differenceInMinutes, format, formatDistanceToNow } from 'date-fns'
+import { differenceInHours, differenceInMinutes, format, formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
 /**
@@ -57,4 +57,31 @@ export const getReservationPeriod = (startAt: string | Date, endAt: string | Dat
   const duration = getDurationText(start, end)
 
   return { range, duration }
+}
+
+/**
+ * 예약 시작 시간으로부터 현재 몇 분이 지났는지 계산
+ * 결과가 양수면 경과된 시간, 음수면 시작 전 남은 시간입니다.
+ */
+export const getElapsedMinutes = (startAt: string | Date) => {
+  if (!startAt) return 0
+
+  // differenceInMinutes(나중 시간, 처음 시간)
+  return differenceInMinutes(new Date(), new Date(startAt))
+}
+
+export const getNoShowMessage = (startAt: string | Date) => {
+  const totalMinutes = getElapsedMinutes(startAt)
+
+  if (totalMinutes < 0) {
+    return `시작까지 ${Math.abs(totalMinutes)}분 남았습니다.`
+  }
+
+  if (totalMinutes < 60) {
+    return `${totalMinutes}분 경과`
+  }
+
+  const hours = differenceInHours(new Date(), new Date(startAt))
+  const minutes = totalMinutes % 60
+  return `${hours}시간 ${minutes}분 경과`
 }

@@ -4,7 +4,15 @@ import { toast } from 'sonner'
 import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 import { UsageTabId } from '../constants/usage-tabs'
 import { useEffect, useState } from 'react'
-import { AdminAction, getTransition } from '../../_shared/model/admin-state-machine'
+import {
+  AdminAction,
+  AdminDomainState,
+  getTransition,
+} from '../../_shared/model/admin-state-machine'
+import { CheckOutBottomDrawer } from './check-out-bottom-drawer'
+import { useCheckOutMutation } from '../mutations/use-check-out-mutation'
+import { NoShowBottomDrawer } from './no-show-bottom-drawer'
+import { useNoShowMutation } from '../mutations/use-no-show-mutaion'
 
 type Props = {
   action: AdminAction | null
@@ -13,8 +21,11 @@ type Props = {
   currentTab: UsageTabId
 }
 
-export function UsageActionDispatcher({ action, item, clear }: Props) {
+export function UsageActionDispatcher({ action, item, clear, currentTab }: Props) {
   const [drawer, setDrawer] = useState<AdminAction | null>(null)
+
+  const checkOutMutation = useCheckOutMutation(currentTab)
+  const noShowMutation = useNoShowMutation(currentTab)
 
   // ✅ transition은 안전하게 계산
   const transition =
@@ -23,7 +34,8 @@ export function UsageActionDispatcher({ action, item, clear }: Props) {
           {
             reservationStatus: item.reservationStatus,
             usageStatus: item.usageStatus,
-          },
+            vehicle: item.vehicle,
+          } as AdminDomainState,
           action,
         )
       : null
@@ -64,60 +76,41 @@ export function UsageActionDispatcher({ action, item, clear }: Props) {
 
   return (
     <>
-      {drawer === 'check_out' && <div>체크아웃 드로어</div>}
-      {/* {drawer === 'check_out' && (
+      {drawer === 'check_out' && (
         <CheckOutBottomDrawer
+          reservation={item}
           open
           onOpenChange={() => {
             setDrawer(null)
             clear()
           }}
-          onConfirm={async payload => {
+          onConfirm={async () => {
             await checkOutMutation.mutateAsync({
-              usageId: item.usageId,
-              ...payload,
+              usageSessionId: item.usageSessionId,
             })
             setDrawer(null)
             clear()
           }}
         />
-      )} */}
+      )}
 
-      {/* {drawer === 'mark_returned' && (
-        <ReturnBottomDrawer
+      {drawer === 'no_show' && (
+        <NoShowBottomDrawer
+          reservation={item}
           open
           onOpenChange={() => {
             setDrawer(null)
             clear()
           }}
-          onConfirm={async payload => {
-            await returnMutation.mutateAsync({
-              usageId: item.usageId,
-              ...payload,
+          onConfirm={async () => {
+            await noShowMutation.mutateAsync({
+              usageSessionId: item.usageSessionId,
             })
             setDrawer(null)
             clear()
           }}
         />
-      )} */}
-
-      {/* {drawer === 'inspect' && (
-        <InspectBottomDrawer
-          open
-          onOpenChange={() => {
-            setDrawer(null)
-            clear()
-          }}
-          onConfirm={async payload => {
-            await inspectMutation.mutateAsync({
-              usageId: item.usageId,
-              ...payload,
-            })
-            setDrawer(null)
-            clear()
-          }}
-        />
-      )} */}
+      )}
     </>
   )
 }

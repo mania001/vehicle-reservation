@@ -14,10 +14,10 @@ export type AvailableVehicle = {
   name: string
   plateNumber: string
   status?: VehicleStatus
-  lastUsedAt: string | null
-  priority: number
+  lastUsedAt?: string | null
+  priority?: number
   fuelLevel?: string
   fuelType?: string
-  history: VehicleHistoryItem[]
+  history?: VehicleHistoryItem[]
   updatedAt?: string | null
 }

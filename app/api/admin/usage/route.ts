@@ -17,12 +17,12 @@ export async function GET(req: Request) {
     return NextResponse.json(fail('NOT_FOUND', 'Invalid tab'), { status: 400 })
   }
 
-  const list = await db
+  const rows = await db
     .select({
       usageSessionId: usageSessions.id,
       reservationId: reservations.id,
 
-      reservationPublicCode: reservations.publicCode,
+      publicCode: reservations.publicCode,
 
       requesterName: reservations.requesterName,
       requesterPhone: reservations.requesterPhone,
@@ -37,15 +37,19 @@ export async function GET(req: Request) {
       reservationStatus: reservations.status,
       usageStatus: usageSessions.status,
 
-      vehicleId: usageSessions.vehicleId,
-      vehicleName: vehicles.name,
-
       checkedOutAt: usageSessions.checkedOutAt,
       returnedAt: usageSessions.returnedAt,
       // closedAt: usageSessions.closedAt,
 
       createdAt: usageSessions.createdAt,
       updatedAt: usageSessions.updatedAt,
+      vehicle: {
+        id: vehicles.id,
+        name: vehicles.name,
+        plateNumber: vehicles.plateNumber,
+        fuelLevel: vehicles.fuelLevel,
+        fuelType: vehicles.fuelType,
+      },
     })
     .from(usageSessions)
     .innerJoin(reservations, eq(reservations.id, usageSessions.reservationId))
@@ -54,5 +58,5 @@ export async function GET(req: Request) {
     .orderBy(...tabConfig.orderBy)
     .limit(50)
 
-  return NextResponse.json(ok({ items: list }))
+  return NextResponse.json(ok({ items: rows }))
 }

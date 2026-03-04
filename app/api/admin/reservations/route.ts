@@ -38,9 +38,11 @@ export async function GET(req: Request) {
       returnedAt: usageSessions.returnedAt,
       inspectedAt: usageSessions.inspectedAt,
 
-      vehicleId: vehicles.id,
-      vehicleName: vehicles.name,
-      vehicleNumber: vehicles.plateNumber,
+      vehicle: {
+        id: vehicles.id,
+        name: vehicles.name,
+        plateNumber: vehicles.plateNumber,
+      },
     })
     .from(reservations)
     .leftJoin(usageSessions, eq(usageSessions.reservationId, reservations.id))

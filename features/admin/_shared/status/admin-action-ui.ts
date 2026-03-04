@@ -20,7 +20,12 @@ export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
   check_out: {
     action: 'check_out',
     label: '키 배출',
-    className: 'bg-emerald-600 text-white',
+    className: 'bg-primary text-white',
+  },
+  no_show: {
+    action: 'no_show',
+    label: '노쇼 처리',
+    className: 'bg-gray-100 text-gray-500',
   },
   mark_returned: {
     action: 'mark_returned',
@@ -35,6 +40,6 @@ export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
   assign_vehicle: {
     action: 'assign_vehicle',
     label: '배차',
-    className: 'bg-indigo-600 text-white',
+    className: 'bg-primary text-white',
   },
 }

@@ -91,6 +91,28 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
         />
       )}
 
+      {drawer === 'assign_vehicle' && (
+        <ApproveBottomDrawer
+          open
+          onOpenChange={() => {
+            setDrawer(null)
+            clear()
+          }}
+          startAt={item.startAt}
+          endAt={item.endAt}
+          onConfirm={async vehicleId => {
+            await approveMutation.mutateAsync({
+              reservationId: item.reservationId,
+              vehicleId,
+            })
+            setDrawer(null)
+            clear()
+          }}
+          type={drawer}
+          required
+        />
+      )}
+
       {drawer === 'reject' && (
         <RejectBottomDrawer
           open
