@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull, or, SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, isNull, ne, or, SQL } from 'drizzle-orm'
 import { ReservationTabId } from './reservation-tabs'
 import { reservations, usageSessions } from '@/db/schema'
 
@@ -29,10 +29,13 @@ export const TAB_QUERY_MAP: Record<
   },
 
   issue: {
-    where: or(
-      eq(reservations.status, 'cancelled'),
-      eq(usageSessions.status, 'no_show'),
-      eq(usageSessions.status, 'cancelled'),
+    where: and(
+      ne(reservations.status, 'closed'),
+      or(
+        eq(reservations.status, 'cancelled'),
+        eq(usageSessions.status, 'no_show'),
+        eq(usageSessions.status, 'cancelled'),
+      ),
     )!,
     orderBy: [desc(reservations.updatedAt), desc(reservations.createdAt)],
   },

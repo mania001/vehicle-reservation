@@ -19,6 +19,9 @@ export type AdminBookingItem = {
   startAt: string
   endAt: string
 
+  cancelReason?: string
+  noShowReportedAt?: string
+
   vehicle?: {
     id: string
     name: string

@@ -38,6 +38,9 @@ export async function GET(req: Request) {
       returnedAt: usageSessions.returnedAt,
       inspectedAt: usageSessions.inspectedAt,
 
+      cancelReason: reservations.cancelReason,
+      noShowReportedAt: usageSessions.noShowReportedAt,
+
       vehicle: {
         id: vehicles.id,
         name: vehicles.name,

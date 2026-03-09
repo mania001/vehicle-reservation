@@ -22,7 +22,9 @@ export type AdminDisplayStatus =
   | 'returned' // returned
   | 'return_check' // inspected
   | 'completed' // reservation closed, rejected
-  | 'issue' //  cancelled, no_show
+  | 'issue' //, no_show
+  | 'canceled' // cancelled
+  | 'no_show' // no_show
 
 // ----------------------------------
 // 1️⃣ UI 파생 상태
@@ -35,6 +37,9 @@ export type AdminAction =
   | 'mark_returned'
   | 'inspect'
   | 'no_show'
+  | 'no_show_check'
+  | 'canceled_check'
+  | 'issue_check'
 
 // ----------------------------------
 // 3️⃣ displayStatus 파생 로직
@@ -45,13 +50,15 @@ export function deriveDisplayStatus(state: AdminDomainState): AdminDisplayStatus
   if (reservationStatus === 'pending') return 'pending'
 
   if (reservationStatus === 'rejected') return 'completed'
-  if (reservationStatus === 'cancelled') return 'issue'
+  if (reservationStatus === 'cancelled') return 'canceled'
+  if (reservationStatus === 'closed') return 'completed'
 
   if (reservationStatus === 'approved' && usageStatus === 'scheduled' && vehicle == null)
     return 'need_car'
 
   if (usageStatus === 'scheduled') return 'key_out'
   if (usageStatus === 'checked_out') return 'driving'
+  if (usageStatus === 'no_show') return 'no_show'
   if (usageStatus === 'returned') return 'returned'
   if (usageStatus === 'inspected') return 'return_check'
 
@@ -70,6 +77,8 @@ export const ADMIN_BADGE_MAP: Record<AdminDisplayStatus, { label: string; classN
   return_check: { label: '최종 반납 확인', className: 'bg-yellow-50 text-yellow-600' },
   completed: { label: '완료', className: 'bg-gray-100 text-gray-500' },
   issue: { label: '이슈', className: 'bg-rose-50 text-rose-600' },
+  canceled: { label: '사용자 취소', className: 'bg-rose-50 text-rose-600' },
+  no_show: { label: '노쇼', className: 'bg-yellow-100 text-yellow-700' },
 }
 
 // ----------------------------------
@@ -100,7 +109,7 @@ export const ADMIN_STATE_MACHINE: Record<
   },
 
   driving: {
-    mark_returned: { next: 'return_check' },
+    // mark_returned: { next: 'return_check' },
   },
 
   returned: {},
@@ -110,7 +119,16 @@ export const ADMIN_STATE_MACHINE: Record<
   },
 
   completed: {},
-  issue: {},
+
+  canceled: {
+    canceled_check: { next: 'completed', requiresDrawer: true },
+  },
+  no_show: {
+    no_show_check: { next: 'completed', requiresDrawer: true },
+  },
+  issue: {
+    issue_check: { next: 'completed', requiresDrawer: true },
+  },
 }
 
 // ----------------------------------

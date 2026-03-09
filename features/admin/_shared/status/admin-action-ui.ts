@@ -35,11 +35,26 @@ export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
   inspect: {
     action: 'inspect',
     label: '점검 완료',
-    className: 'bg-purple-600 text-white',
+    className: 'bg-primary text-white',
   },
   assign_vehicle: {
     action: 'assign_vehicle',
     label: '배차',
+    className: 'bg-primary text-white',
+  },
+  no_show_check: {
+    action: 'no_show_check',
+    label: '노쇼 확정',
+    className: 'bg-primary text-white',
+  },
+  canceled_check: {
+    action: 'canceled_check',
+    label: '사용자 취소 확인',
+    className: 'bg-primary text-white',
+  },
+  issue_check: {
+    action: 'canceled_check',
+    label: '이슈 처리 완료',
     className: 'bg-primary text-white',
   },
 }

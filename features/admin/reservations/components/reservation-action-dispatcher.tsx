@@ -9,6 +9,8 @@ import { toast } from 'sonner'
 import { ApproveBottomDrawer } from './approve-bottom-drawer'
 import { RejectBottomDrawer } from './reject-bottom-drawer'
 import { AdminAction, getTransition } from '../../_shared/model/admin-state-machine'
+import { IssueBottomDrawer } from './issue-bottom-drawer'
+import { useCloseReservationMutation } from '../mutations/use-close-reservation-mutation'
 
 type Props = {
   action: AdminAction | null
@@ -22,6 +24,7 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
 
   const approveMutation = useApproveReservationMutation(currentTab)
   const rejectMutation = useRejectReservationMutation(currentTab)
+  const closeMutation = useCloseReservationMutation(currentTab)
 
   // ✅ transition은 안전하게 계산
   const transition =
@@ -128,6 +131,25 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
             setDrawer(null)
             clear()
           }}
+        />
+      )}
+
+      {(drawer === 'no_show_check' || drawer === 'canceled_check' || drawer === 'issue_check') && (
+        <IssueBottomDrawer
+          open
+          item={item}
+          onOpenChange={() => {
+            setDrawer(null)
+            clear()
+          }}
+          onConfirm={async () => {
+            await closeMutation.mutateAsync({
+              reservationId: item.reservationId,
+            })
+            setDrawer(null)
+            clear()
+          }}
+          type={drawer}
         />
       )}
     </>

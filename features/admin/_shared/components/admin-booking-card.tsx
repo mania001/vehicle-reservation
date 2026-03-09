@@ -52,7 +52,9 @@ export function AdminBookingCard({ item, onAction }: Props) {
 
   return (
     <div
-      className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-4 transition-all hover:shadow-md"
+      className={cn(
+        'bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-4 transition-all hover:shadow-md',
+      )}
       onClick={() => router.push(`/admin/reservations/${item.reservationId}`)}
     >
       {/* 상단 */}
@@ -95,10 +97,26 @@ export function AdminBookingCard({ item, onAction }: Props) {
 
       {/* 목적 */}
       <div className="bg-slate-50 rounded-2xl p-4">
-        <p className="text-[10px] font-black text-slate-400 mb-2">방문 목적 (목적지)</p>
-        <p className="text-sm font-bold">
-          {item.purpose} ({item.destination})
-        </p>
+        {item.reservationStatus === 'cancelled' && (
+          <>
+            <p className="text-[10px] font-black text-slate-400 mb-2">취소 사유</p>
+            <p className="text-sm font-bold">{item.cancelReason ?? '사유 없음'}</p>
+          </>
+        )}
+        {item.usageStatus === 'no_show' && (
+          <>
+            <p className="text-[10px] font-black text-slate-400 mb-2">이슈 내용</p>
+            <p className="text-sm font-bold">{`${getTimeAgo(item.noShowReportedAt!)} 노쇼 처리 되었음`}</p>
+          </>
+        )}
+        {!(item.reservationStatus == 'cancelled' || item.usageStatus === 'no_show') && (
+          <>
+            <p className="text-[10px] font-black text-slate-400 mb-2">방문 목적 (목적지)</p>
+            <p className="text-sm font-bold">
+              {item.purpose} ({item.destination})
+            </p>
+          </>
+        )}
       </div>
 
       {/* 액션 */}
