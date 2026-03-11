@@ -20,7 +20,7 @@ export const TAB_QUERY_MAP: Record<
   },
 
   return_check: {
-    where: eq(usageSessions.status, 'inspected'),
+    where: and(eq(usageSessions.status, 'inspected'), ne(reservations.status, 'closed'))!,
     orderBy: [
       // 반납된지 오래된 것부터(빨리 처리해야 하니까)
       asc(usageSessions.inspectedAt),
