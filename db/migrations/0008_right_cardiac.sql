@@ -1,0 +1,1 @@
+ALTER TABLE "admin_profiles" ADD COLUMN "last_login_at" timestamp with time zone;
