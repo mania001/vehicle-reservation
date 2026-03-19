@@ -1,3 +1,4 @@
+import { UsageStatus } from '../usage-session/usage-status'
 import { ReservationStatus } from './reservation-status'
 
 export interface ReservationCreateInput {
@@ -24,4 +25,15 @@ export interface Reservation {
   destination: string
   status: ReservationStatus
   createdAt: Date
+
+  usageSessionId?: string | null
+  usageStatus: UsageStatus | null
+
+  vehicle?: {
+    id: string
+    name: string
+    plateNumber: string
+    fuelLevel?: string
+    fuelType?: string
+  } | null
 }
