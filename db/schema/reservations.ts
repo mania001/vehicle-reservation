@@ -32,6 +32,10 @@ export const reservations = pgTable('reservations', {
 
   status: reservationStatusEnum('status').notNull().default('pending'),
 
+  // ✅ 운전자 정보
+  driverName: text('driver_name'),
+  driverPhone: text('driver_phone'),
+
   /**
    * 취소 관련 (cancelled 전용)
    */

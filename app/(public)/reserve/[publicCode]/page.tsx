@@ -9,6 +9,7 @@ import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { ReservationUsage } from '@/features/reserve/components/reservation-usage'
+import { DriverBottomDrawer } from '@/features/reserve/components/driver-button-drawer'
 
 interface PageProps {
   params: { publicCode: string }
@@ -86,8 +87,10 @@ export default async function ReserveDeatilPage({ params }: PageProps) {
               )}
             </div>
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md flex space-x-3 justify-center z-50">
-              <Button className="flex-1 h-12 shadow">운전자 등록</Button>
-              <Button className="flex-1 h-12 bg-gray-200 text-gray-500 shadow">예약 취소</Button>
+              <div className="w-full max-w-md max-auto flex space-x-3">
+                <DriverBottomDrawer reservation={reservation} />
+                <Button className="flex-1 h-12 bg-gray-200 text-gray-500 shadow">예약 취소</Button>
+              </div>
             </div>
           </>
         )}

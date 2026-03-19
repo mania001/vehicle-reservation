@@ -92,7 +92,11 @@ export const MobileDateTimePicker = ({
               !value && 'text-muted-foreground',
             )}
             // Drawer 열릴 때 값이 없으면 현재 시간으로 즉시 업데이트하고 싶다면 아래 주석 해제
-            onClick={() => !value && onChange(new Date(displayDate.setMinutes(currentMinute)))}
+            onClick={e => {
+              if (!value) onChange(new Date(displayDate.setMinutes(currentMinute)))
+
+              e.currentTarget.blur()
+            }}
           >
             <Clock
               className={cn(

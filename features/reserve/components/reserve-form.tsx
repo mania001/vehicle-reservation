@@ -1,6 +1,6 @@
 'use client'
 
-import { Building2, FileText, MapPin, User } from 'lucide-react'
+import { Building2, FileText, MapPin, Phone, User } from 'lucide-react'
 import { FormField } from './form-field'
 import { MobileDateTimePicker } from './mobile-date-picker'
 import { addHours } from 'date-fns'
@@ -64,7 +64,7 @@ export default function ReserveForm() {
       <FormField
         label={'연락처'}
         type="tel"
-        icon={<User className="w-4 h-4 text-slate-400" />}
+        icon={<Phone className="w-4 h-4 text-slate-400" />}
         placeholder={'휴대폰 번호를 입력해주세요.'}
         {...register('phone')}
         error={errors.phone?.message}
