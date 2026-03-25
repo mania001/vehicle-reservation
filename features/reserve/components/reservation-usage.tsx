@@ -41,7 +41,8 @@ export function ReservationUsage({ reservation, sticky, type = 'before' }: Props
               <span>
                 {format(reservation.endAt, 'yyyy.MM.dd HH:mm', {
                   locale: ko,
-                })}
+                })}{' '}
+                까지
               </span>
             </div>
             <div className="w-full h-2 bg-primary/20 rounded-full overflow-hidden">
@@ -88,7 +89,7 @@ export function ReservationUsage({ reservation, sticky, type = 'before' }: Props
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md flex space-x-3 justify-center z-50">
-        {sticky && sticky}
+        <div className="w-full max-w-md max-auto flex">{sticky && sticky}</div>
       </div>
     </>
   )

@@ -23,6 +23,7 @@ export async function getReservationByPublicCode(publicCode: string) {
 
       usageSessionId: usageSessions.id,
       usageStatus: usageSessions.status,
+      beforeDriveChecked: usageSessions.beforeDriveChecked,
       // approvedAt: usageSessions.approvedAt,
       // checkedOutAt: usageSessions.checkedOutAt,
       // returnedAt: usageSessions.returnedAt,

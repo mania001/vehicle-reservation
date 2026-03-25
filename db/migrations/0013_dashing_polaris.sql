@@ -1,0 +1,4 @@
+-- ALTER TABLE "usage_session_checks" ALTER COLUMN "type" SET DATA TYPE text;--> statement-breakpoint
+-- DROP TYPE "public"."check_type";--> statement-breakpoint
+-- CREATE TYPE "public"."check_type" AS ENUM('before_drive', 'after_drive', 'admin_inspect');--> statement-breakpoint
+-- ALTER TABLE "usage_session_checks" ALTER COLUMN "type" SET DATA TYPE "public"."check_type" USING "type"::"public"."check_type";

@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { reservations } from './reservations'
 import { vehicles } from './vehicles'
 
@@ -79,4 +79,6 @@ export const usageSessions = pgTable('usage_sessions', {
   })
     .defaultNow()
     .notNull(),
+
+  beforeDriveChecked: boolean('before_drive_checked').notNull().default(false),
 })

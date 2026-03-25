@@ -1,0 +1,1 @@
+ALTER TABLE "usage_sessions" ADD COLUMN "before_drive_checked" boolean DEFAULT false NOT NULL;

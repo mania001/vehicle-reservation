@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { ReservationUsage } from '@/features/reserve/components/reservation-usage'
 import { DriverBottomDrawer } from '@/features/reserve/components/driver-button-drawer'
 import { CancelBottomDrawer } from '@/features/reserve/components/cancel-button-drawer'
+import { UsageBottomDrawer } from '@/features/reserve/components/usage-button-drawer'
 
 interface PageProps {
   params: { publicCode: string }
@@ -24,7 +25,11 @@ export default async function ReserveDeatilPage({ params }: PageProps) {
     notFound()
   }
 
-  const step = getReservationStep(reservation.status, reservation.usageStatus ?? undefined)
+  const step = getReservationStep(
+    reservation.status,
+    reservation.usageStatus ?? undefined,
+    reservation.beforeDriveChecked ?? false,
+  )
 
   const vehicle = reservation.vehicle
 
@@ -99,7 +104,7 @@ export default async function ReserveDeatilPage({ params }: PageProps) {
           <ReservationUsage
             reservation={reservation}
             type="before"
-            sticky={<Button className="flex-1 h-15 text-md shadow">차량 이용하기</Button>}
+            sticky={<UsageBottomDrawer reservation={reservation} />}
           />
         )}
         {step === 3 && (

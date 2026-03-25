@@ -4,13 +4,16 @@ import { UsageStatus } from '@/domains/usage-session/usage-status'
 export function getReservationStep(
   reservationStatus: ReservationStatus,
   usageStatus?: UsageStatus,
+  beforeDriveChecked?: boolean,
 ) {
   if (reservationStatus === 'pending') return 0
 
   if (reservationStatus === 'approved') {
     if (usageStatus === 'scheduled') return 1
-    if (usageStatus === 'checked_out') return 2
-    if (usageStatus === 'returned') return 3
+    if (usageStatus === 'checked_out') {
+      return beforeDriveChecked ? 3 : 2
+    }
+    if (usageStatus === 'returned') return 4
     if (usageStatus === 'inspected') return 4
   }
 
@@ -18,6 +21,7 @@ export function getReservationStep(
 
   if (reservationStatus === 'rejected') return 5
   if (reservationStatus === 'cancelled') return 6
+  if (usageStatus === 'cancelled') return 6
 
   return 0
 }
