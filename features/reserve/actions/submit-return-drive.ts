@@ -4,11 +4,15 @@ import { db } from '@/db'
 import { usageSessionChecks, usageSessionPhotos, usageSessions } from '@/db/schema'
 import { uploadMultipleFiles } from '@/lib/supabase/storage'
 import { eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 export async function submitReturnDrive({
   usageSessionId,
   mileage,
   fuelLevel,
+  isFueled,
+  fuelAmount,
+  isCleaned,
   parkingZone, // 주차 층 (예: B2)
   parkingNumber, // 주차 구역 (예: 105)
   note,
@@ -17,10 +21,13 @@ export async function submitReturnDrive({
   usageSessionId: string
   mileage: number
   fuelLevel: number
+  isFueled: boolean
+  fuelAmount: number
+  isCleaned: boolean
   parkingZone: string
   parkingNumber: string
-  note?: string
-  photos: File[]
+  note: string
+  photos: File[] // 클라이언트에서 받은 파일 배열
 }) {
   try {
     // 유틸리티 호출: 일괄 업로드 및 URL 획득
@@ -42,6 +49,9 @@ export async function submitReturnDrive({
           usageSessionId,
           type: 'after_drive',
           mileage,
+          isFueled,
+          fuelAmount,
+          isCleaned,
           fuelLevel,
           parkingZone, // 주차 정보 기록
           parkingNumber,
@@ -70,6 +80,9 @@ export async function submitReturnDrive({
         })
         .where(eq(usageSessions.id, usageSessionId))
     })
+
+    // 캐시 갱신 (예약 목록이나 차량 상세 페이지)
+    revalidatePath('/admin/usage')
 
     return { success: true }
   } catch (error) {

@@ -7,11 +7,11 @@ import { Calendar, CheckCircle, Clock, NavigationOff } from 'lucide-react'
 import { ReservationInformation } from '@/features/reserve/components/reservation-infomation'
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import { Button } from '@/components/ui/button'
 import { ReservationUsage } from '@/features/reserve/components/reservation-usage'
 import { DriverBottomDrawer } from '@/features/reserve/components/driver-button-drawer'
 import { CancelBottomDrawer } from '@/features/reserve/components/cancel-button-drawer'
 import { UsageBottomDrawer } from '@/features/reserve/components/usage-button-drawer'
+import { ReturnBottomDrawer } from '@/features/reserve/components/return-button-drawer'
 
 interface PageProps {
   params: { publicCode: string }
@@ -111,7 +111,7 @@ export default async function ReserveDeatilPage({ params }: PageProps) {
           <ReservationUsage
             reservation={reservation}
             type="usage"
-            sticky={<Button className="flex-1 h-15 text-md shadow">반납하기</Button>}
+            sticky={<ReturnBottomDrawer reservation={reservation} />}
           />
         )}
         {step === 4 && (

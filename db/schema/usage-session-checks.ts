@@ -1,4 +1,4 @@
-import { integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, integer, pgEnum, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const checkTypeEnum = pgEnum('check_type', [
   'before_drive', // 운전 전 사용하기
@@ -15,6 +15,13 @@ export const usageSessionChecks = pgTable('usage_session_checks', {
   mileage: integer('mileage'),
   fuelLevel: integer('fuel_level'),
   // 0~100 %
+
+  // 주유 및 비용 관련
+  isFueled: boolean('is_fueled').default(false),
+  fuelAmount: integer('fuel_amount'), // 주유 금액
+
+  // 청소 상태
+  isCleaned: boolean('is_cleaned').default(false),
 
   // 주차 정보 (주로 반납 시 사용)
   parkingZone: text('parking_zone'),
