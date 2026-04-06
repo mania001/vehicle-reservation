@@ -81,4 +81,8 @@ export const usageSessions = pgTable('usage_sessions', {
     .notNull(),
 
   beforeDriveChecked: boolean('before_drive_checked').notNull().default(false),
+
+  hasIssue: boolean('has_issue').notNull().default(false),
+
+  issueReportedAt: timestamp('issue_reported_at', { withTimezone: true }),
 })

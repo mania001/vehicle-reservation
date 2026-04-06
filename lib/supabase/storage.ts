@@ -51,3 +51,36 @@ export async function uploadMultipleFiles(
 
   return Promise.all(uploadPromises)
 }
+
+/**
+ * Supabase Storage 파일 경로를 받아 접근 가능한 URL을 반환합니다.
+ * @param bucket 버킷 이름 (예: 'images')
+ * @param path 파일 경로 (예: 'usage/c58e.../photo.webp')
+ * @param isPrivate 비공개 버킷 여부 (기본값: false)
+ * @param expiresIn 세션 유지 시간 (Private일 경우만 해당, 초 단위)
+ */
+export async function getStorageUrl(
+  bucket: string,
+  path: string,
+  isPrivate: boolean = false,
+  expiresIn: number = 3600, // 기본 1시간
+) {
+  if (!path) return null
+
+  const supabase = createClient()
+  if (isPrivate) {
+    console.log('Generating signed URL for private bucket:', bucket, path)
+    // Private 버킷: Signed URL 생성 (비동기)
+    const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, expiresIn)
+
+    if (error) {
+      console.error('Error creating signed URL:', error.message)
+      return null
+    }
+    return data.signedUrl
+  } else {
+    // Public 버킷: 단순 URL 반환 (동기)
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path)
+    return data.publicUrl
+  }
+}

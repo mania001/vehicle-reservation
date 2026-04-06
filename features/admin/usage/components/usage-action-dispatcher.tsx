@@ -13,6 +13,8 @@ import { CheckOutBottomDrawer } from './check-out-bottom-drawer'
 import { useCheckOutMutation } from '../mutations/use-check-out-mutation'
 import { NoShowBottomDrawer } from './no-show-bottom-drawer'
 import { useNoShowMutation } from '../mutations/use-no-show-mutaion'
+import { ReturnBottomDrawer } from './return-buttom-drawer'
+import { useInspectMutation } from '../mutations/use-inspect-mutation'
 
 type Props = {
   action: AdminAction | null
@@ -26,6 +28,7 @@ export function UsageActionDispatcher({ action, item, clear, currentTab }: Props
 
   const checkOutMutation = useCheckOutMutation(currentTab)
   const noShowMutation = useNoShowMutation(currentTab)
+  const inspectMutation = useInspectMutation(currentTab)
 
   // ✅ transition은 안전하게 계산
   const transition =
@@ -106,6 +109,44 @@ export function UsageActionDispatcher({ action, item, clear, currentTab }: Props
             await noShowMutation.mutateAsync({
               usageSessionId: item.usageSessionId,
             })
+            setDrawer(null)
+            clear()
+          }}
+        />
+      )}
+
+      {drawer === 'mark_returned' && (
+        <ReturnBottomDrawer
+          reservation={item}
+          open
+          onOpenChange={() => {
+            setDrawer(null)
+            clear()
+          }}
+          onConfirm={async ({
+            mileage,
+            fuelLevel,
+            parkingZone,
+            parkingNumber,
+            isCleaned,
+            note,
+            images,
+            issue,
+            selections,
+          }) => {
+            await inspectMutation.mutateAsync({
+              usageSessionId: item.usageSessionId,
+              mileage,
+              fuelLevel,
+              parkingZone,
+              parkingNumber,
+              isCleaned,
+              note,
+              images,
+              issue,
+              selections,
+            })
+
             setDrawer(null)
             clear()
           }}

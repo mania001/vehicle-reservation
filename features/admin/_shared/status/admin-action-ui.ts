@@ -30,7 +30,7 @@ export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
   mark_returned: {
     action: 'mark_returned',
     label: '반납 처리',
-    className: 'bg-orange-500 text-white',
+    className: 'bg-primary text-white',
   },
   inspect: {
     action: 'inspect',

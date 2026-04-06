@@ -20,7 +20,11 @@ export const TAB_QUERY_MAP: Record<
   },
 
   return_check: {
-    where: and(eq(usageSessions.status, 'inspected'), ne(reservations.status, 'closed'))!,
+    where: and(
+      eq(usageSessions.status, 'inspected'),
+      eq(usageSessions.hasIssue, false),
+      ne(reservations.status, 'closed'),
+    )!,
     orderBy: [
       // 반납된지 오래된 것부터(빨리 처리해야 하니까)
       asc(usageSessions.inspectedAt),
@@ -32,6 +36,10 @@ export const TAB_QUERY_MAP: Record<
     where: and(
       ne(reservations.status, 'closed'),
       or(
+        /**
+         * 관리자 점검 중 문제 발견
+         */
+        eq(usageSessions.hasIssue, true),
         eq(reservations.status, 'cancelled'),
         eq(usageSessions.status, 'no_show'),
         eq(usageSessions.status, 'cancelled'),

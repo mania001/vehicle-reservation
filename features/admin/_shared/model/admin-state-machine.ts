@@ -112,7 +112,9 @@ export const ADMIN_STATE_MACHINE: Record<
     // mark_returned: { next: 'return_check' },
   },
 
-  returned: {},
+  returned: {
+    mark_returned: { next: 'return_check', requiresDrawer: true },
+  },
 
   return_check: {
     inspect: { next: 'completed', requiresDrawer: true },

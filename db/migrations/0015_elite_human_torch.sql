@@ -1,0 +1,1 @@
+ALTER TABLE "usage_session_checks" ALTER COLUMN "is_cleaned" SET DEFAULT false;
