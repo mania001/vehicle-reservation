@@ -8,7 +8,7 @@ import { ReservationTabId } from '../constants/reservation-tabs'
 import { adminReservationQueryKeys } from '../query-keys'
 
 function getNextTabAfterClose(tab: ReservationTabId): ReservationTabId | null {
-  if (tab === 'issue') return 'done'
+  if (tab === 'issue' || tab === 'return_check') return 'done'
   return null
 }
 
@@ -37,11 +37,11 @@ export function useCloseReservationMutation(currentTab: ReservationTabId) {
     },
 
     onSuccessSideEffect: () => {
-      toast.success('이슈 처리 완료')
+      toast.success('완료 처리 완료')
     },
 
     onErrorSideEffect: () => {
-      toast.error('이슈 처리 실패')
+      toast.error('완료 처리 실패')
     },
   })
 }

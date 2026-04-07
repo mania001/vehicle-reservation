@@ -13,7 +13,7 @@ export async function closeReservation(payload: CloseReservationPayload) {
 
   if (!res.ok) {
     const data = (await res.json().catch(() => null)) as { message?: string } | null
-    throw new Error(data?.message ?? '이슈 처리 실패')
+    throw new Error(data?.message ?? '완료 처리 실패')
   }
 
   return (await res.json()) as CloseReservationResponse
