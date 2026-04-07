@@ -4,7 +4,7 @@ export type RejectReservationPayload = {
 }
 
 export async function rejectReservation(payload: RejectReservationPayload) {
-  const res = await fetch('/api/admin/reservations/reject', {
+  const res = await fetch(`/api/admin/reservations/${payload.reservationId}/reject`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

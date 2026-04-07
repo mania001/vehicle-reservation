@@ -7,8 +7,18 @@ import { ReservationTabId } from '../constants/reservation-tabs'
 import { adminReservationQueryKeys } from '../query-keys'
 import { AdminReservationListItem } from '../types/reservaiton-list-item'
 
-function getNextTabAfterApprove(currentTab: ReservationTabId): ReservationTabId | null {
-  if (currentTab === 'pending') return 'need_car'
+function getNextTabAfterApprove(
+  currentTab: ReservationTabId,
+  payload?: ApproveReservationPayload,
+): ReservationTabId | null {
+  if (currentTab === 'pending') {
+    if (payload?.vehicleId) {
+      return null
+    }
+
+    return 'need_car'
+  }
+
   return null
 }
 
@@ -29,10 +39,10 @@ export function useApproveReservationMutation(currentTab: ReservationTabId) {
     getPayloadId: payload => payload.reservationId,
     getItemId: item => item.reservationId,
 
-    getNextTab: (_payload, tab) => getNextTabAfterApprove(tab),
+    getNextTab: (payload, tab) => getNextTabAfterApprove(tab, payload),
 
-    getInvalidateTabs: (_payload, tab) => {
-      const nextTab = getNextTabAfterApprove(tab)
+    getInvalidateTabs: (payload, tab) => {
+      const nextTab = getNextTabAfterApprove(tab, payload)
       return nextTab ? [nextTab] : []
     },
 

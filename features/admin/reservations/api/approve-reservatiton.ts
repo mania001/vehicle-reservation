@@ -8,7 +8,7 @@ export type ApproveReservationResponse = {
 }
 
 export async function approveReservation(payload: ApproveReservationPayload) {
-  const res = await fetch('/api/admin/reservations/approve', {
+  const res = await fetch(`/api/admin/reservations/${payload.reservationId}/approve`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
