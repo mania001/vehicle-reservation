@@ -3,9 +3,7 @@ import QueryProvider from '@/lib/react-query/query-provider'
 
 export default async function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
   // 관리자 인증 요구
-  const admin = await requireAdmin()
-
-  console.log(admin)
+  await requireAdmin()
 
   return (
     <QueryProvider>
