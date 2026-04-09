@@ -1,4 +1,5 @@
 import { UsageStatus } from '../usage-session/usage-status'
+import { FuelType } from '../vehicle/vehicle-status'
 import { ReservationStatus } from './reservation-status'
 
 export interface ReservationCreateInput {
@@ -27,13 +28,18 @@ export interface Reservation {
   createdAt: Date
 
   usageSessionId?: string | null
-  usageStatus: UsageStatus | null
+  usageStatus?: UsageStatus | null
 
   vehicle?: {
     id: string
     name: string
     plateNumber: string
-    fuelLevel?: string
-    fuelType?: string
+    fuelLevel?: number
+    fuelType?: FuelType
+    // 최신 주행 데이터 (반납 시 동기화)
+    mileage?: number
+    // 최신 주차 위치 (반납 시 동기화)
+    lastParkingZone?: string | null
+    lastParkingNumber?: string | null
   } | null
 }

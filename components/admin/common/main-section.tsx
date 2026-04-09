@@ -9,7 +9,7 @@ interface MainSectionProps {
 export const MainSection = ({ tab = false, children }: MainSectionProps) => {
   return (
     <>
-      <HeaderSeparator tab />
+      <HeaderSeparator tab={tab} />
       <main className={cn('pb-8', tab ? 'pt-15' : 'p-4')}>{children}</main>
     </>
   )

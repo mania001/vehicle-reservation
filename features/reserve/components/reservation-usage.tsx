@@ -6,6 +6,7 @@ import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { Car } from 'lucide-react'
 import CarProgressBar from './car-progress-bar'
+import { FUEL_TYPE_MAP } from '@/domains/vehicle/vehicle-status'
 
 interface Props {
   reservation: Reservation
@@ -25,7 +26,7 @@ export function ReservationUsage({ reservation, sticky, type = 'before' }: Props
         <div className="flex justify-center items-center text-center h-3 gap-4 mt-2 text-md text-gray-400">
           <div>{vehicle?.plateNumber}</div>
           <Separator orientation="vertical" />
-          <div>{'휘발유'}</div>
+          <div>{vehicle?.fuelType ? FUEL_TYPE_MAP[vehicle.fuelType] : '-'}</div>
         </div>
       </div>
       <div className="mb-10">
@@ -58,7 +59,10 @@ export function ReservationUsage({ reservation, sticky, type = 'before' }: Props
         {type === 'before' && (
           <>
             <p className="text-xs text-left text-gray-400 mb-1">주차 위치</p>
-            <p className="text-left font-mono font-bold">{'지하 3층 F - 1'}</p>
+            <p className="text-left font-mono font-bold">
+              신길본당 {reservation.vehicle?.lastParkingZone || ''}{' '}
+              {reservation.vehicle?.lastParkingNumber || ''}
+            </p>
           </>
         )}
         {type === 'usage' && (

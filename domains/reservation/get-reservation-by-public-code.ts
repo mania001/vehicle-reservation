@@ -36,6 +36,13 @@ export async function getReservationByPublicCode(publicCode: string) {
         id: vehicles.id,
         name: vehicles.name,
         plateNumber: vehicles.plateNumber,
+        fuelLevel: vehicles.fuelLevel,
+        fuelType: vehicles.fuelType,
+        // 최신 주행 데이터 (반납 시 동기화)
+        mileage: vehicles.mileage,
+        // 최신 주차 위치 (반납 시 동기화)
+        lastParkingZone: vehicles.lastParkingZone, // 예: B2층
+        lastParkingNumber: vehicles.lastParkingNumber,
       },
     })
     .from(reservations)
