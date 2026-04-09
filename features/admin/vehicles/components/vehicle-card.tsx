@@ -7,7 +7,7 @@ import { VehicleStatusBadge } from './vehicle-status-badge'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { VehicleDrawer } from './vehicle-drawer'
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 import { useUpdateVehicle } from '../mutations/use-update-vehicle'
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 }
 
 export function VehicleCard({ vehicle }: Props) {
-  const router = useRouter()
+  //const router = useRouter()
   const [open, setOpen] = useState(false)
 
   const mutation = useUpdateVehicle()
@@ -23,7 +23,10 @@ export function VehicleCard({ vehicle }: Props) {
   return (
     <>
       <div
-        onClick={() => router.push(`/admin/vehicles/${vehicle.id}`)}
+        onClick={e => {
+          e.stopPropagation()
+          //router.push(`/admin/vehicles/${vehicle.id}`)
+        }}
         className="block relative w-full rounded-xl border p-3 text-left transition border-border bg-white"
       >
         <div className="flex gap-4 items-center">
