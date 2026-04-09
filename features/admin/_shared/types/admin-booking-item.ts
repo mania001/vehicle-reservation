@@ -30,5 +30,6 @@ export type AdminBookingItem = {
     fuelType?: string
   } | null
 
+  hasIssue?: boolean // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
   createdAt: string
 }

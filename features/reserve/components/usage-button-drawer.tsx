@@ -30,8 +30,8 @@ interface Props {
 export function UsageBottomDrawer({ reservation }: Props) {
   const [open, setOpen] = useState(false)
 
-  const [mileage, setMileage] = useState(0)
-  const [fuel, setFuel] = useState([50]) // 슬라이더 값 (배열 형태)
+  const [mileage, setMileage] = useState(reservation.vehicle?.mileage ?? 0) // 초기값을 예약된 차량의 주행거리로 설정
+  const [fuel, setFuel] = useState([reservation.vehicle?.fuelLevel ?? 50]) // 슬라이더 값 (배열 형태)
   const [note, setNote] = useState('')
   const [images, setImages] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([]) // 미리보기 URL 관리

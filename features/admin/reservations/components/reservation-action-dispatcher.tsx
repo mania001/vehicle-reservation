@@ -34,6 +34,12 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
           {
             reservationStatus: item.reservationStatus,
             usageStatus: item.usageStatus,
+            vehicle: {
+              id: item.vehicle?.id ?? '',
+              name: item.vehicle?.name ?? '',
+              plateNumber: item.vehicle?.plateNumber ?? '',
+            },
+            hasIssue: item.hasIssue,
           },
           action,
         )

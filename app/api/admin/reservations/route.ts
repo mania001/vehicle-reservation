@@ -46,6 +46,7 @@ export async function GET(req: Request) {
         name: vehicles.name,
         plateNumber: vehicles.plateNumber,
       },
+      hasIssue: usageSessions.hasIssue,
     })
     .from(reservations)
     .leftJoin(usageSessions, eq(usageSessions.reservationId, reservations.id))

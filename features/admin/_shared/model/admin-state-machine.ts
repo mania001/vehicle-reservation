@@ -9,6 +9,7 @@ export type AdminDomainState = {
     name: string
     plateNumber: string
   }
+  hasIssue?: boolean // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
 }
 
 // ----------------------------------
@@ -45,7 +46,7 @@ export type AdminAction =
 // 3️⃣ displayStatus 파생 로직
 // ----------------------------------
 export function deriveDisplayStatus(state: AdminDomainState): AdminDisplayStatus {
-  const { reservationStatus, usageStatus, vehicle } = state
+  const { reservationStatus, usageStatus, vehicle, hasIssue } = state
 
   if (reservationStatus === 'pending') return 'pending'
 
@@ -60,8 +61,10 @@ export function deriveDisplayStatus(state: AdminDomainState): AdminDisplayStatus
   if (usageStatus === 'checked_out') return 'driving'
   if (usageStatus === 'no_show') return 'no_show'
   if (usageStatus === 'returned') return 'returned'
-  if (usageStatus === 'inspected') return 'return_check'
-
+  if (usageStatus === 'inspected') {
+    if (hasIssue) return 'issue'
+    return 'return_check'
+  }
   return 'issue'
 }
 

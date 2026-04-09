@@ -53,8 +53,8 @@ export const ADMIN_ACTION_UI_MAP: Record<AdminAction, AdminActionUI> = {
     className: 'bg-primary text-white',
   },
   issue_check: {
-    action: 'canceled_check',
-    label: '이슈 처리 완료',
+    action: 'issue_check',
+    label: '이슈 확인',
     className: 'bg-primary text-white',
   },
 }

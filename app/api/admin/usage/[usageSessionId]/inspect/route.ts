@@ -68,6 +68,7 @@ export const POST = withAdminApi<Response, { usageSessionId: string }>(
         },
         nextData: {
           status: UsageStatus.INSPECTED,
+          hasIssue: issue,
         },
       },
 

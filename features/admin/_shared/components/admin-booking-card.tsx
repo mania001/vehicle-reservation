@@ -26,6 +26,7 @@ export function AdminBookingCard({ item, onAction }: Props) {
     reservationStatus: item.reservationStatus,
     usageStatus: item.usageStatus,
     vehicle: item.vehicle,
+    hasIssue: item.hasIssue, // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
   } as AdminDomainState
 
   const router = useRouter()
