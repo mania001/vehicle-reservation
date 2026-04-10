@@ -7,7 +7,7 @@ import { hasRole } from './has-role'
 type Handler<T, P> = (ctx: {
   admin: Awaited<ReturnType<typeof requireAdminApi>>
   req: Request
-  params: P
+  params: Promise<P>
 }) => Promise<T>
 
 type Options = {
@@ -18,7 +18,7 @@ export function withAdminApi<T, P extends Record<string, string> = Record<string
   handler: Handler<T, P>,
   options?: Options,
 ) {
-  return async (req: Request, context: { params: P }) => {
+  return async (req: Request, context: { params: Promise<P> }) => {
     try {
       const admin = await requireAdminApi()
 
