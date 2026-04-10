@@ -10,7 +10,10 @@ import { getStorageUrl } from '@/lib/supabase/storage'
 import { and, desc, eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
-export async function GET(req: Request, { params }: { params: { usageSessionId: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ usageSessionId: string }> },
+) {
   try {
     const { usageSessionId } = await params
 
