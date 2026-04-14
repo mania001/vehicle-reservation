@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { ReturnInfo } from '../../usage/types/return-info'
 
-export function useAdminInspection({ usageSessionId }: { usageSessionId: string }) {
+export function useAdminInspection({
+  usageSessionId,
+  enabled,
+}: {
+  usageSessionId: string
+  enabled: boolean
+}) {
   return useQuery({
     queryKey: ['admin-inspection', usageSessionId],
     queryFn: async (): Promise<ReturnInfo> => {
@@ -9,5 +15,6 @@ export function useAdminInspection({ usageSessionId }: { usageSessionId: string 
       if (!res.ok) throw new Error('failed to fetch return info')
       return (await res.json()).data.item as ReturnInfo
     },
+    enabled,
   })
 }

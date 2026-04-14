@@ -35,7 +35,8 @@ export function IssueBottomDrawer({
   const [loading, setLoading] = useState(false)
 
   const { data: returnInfo, isLoading } = useAdminInspection({
-    usageSessionId: item!.usageSessionId,
+    usageSessionId: item?.usageSessionId ?? '',
+    enabled: !!item?.usageSessionId,
   })
 
   const imageGroups = [

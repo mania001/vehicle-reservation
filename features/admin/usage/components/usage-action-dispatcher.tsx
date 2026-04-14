@@ -89,7 +89,7 @@ export function UsageActionDispatcher({ action, item, clear, currentTab }: Props
           }}
           onConfirm={async () => {
             await checkOutMutation.mutateAsync({
-              usageSessionId: item.usageSessionId,
+              usageSessionId: item.usageSessionId ?? '',
             })
             setDrawer(null)
             clear()
@@ -107,7 +107,7 @@ export function UsageActionDispatcher({ action, item, clear, currentTab }: Props
           }}
           onConfirm={async () => {
             await noShowMutation.mutateAsync({
-              usageSessionId: item.usageSessionId,
+              usageSessionId: item.usageSessionId ?? '',
             })
             setDrawer(null)
             clear()
@@ -135,7 +135,7 @@ export function UsageActionDispatcher({ action, item, clear, currentTab }: Props
             selections,
           }) => {
             await inspectMutation.mutateAsync({
-              usageSessionId: item.usageSessionId,
+              usageSessionId: item.usageSessionId ?? '',
               mileage,
               fuelLevel,
               parkingZone,

@@ -45,7 +45,8 @@ export function ReturnBottomDrawer({
 }) {
   const [loading, setLoading] = useState(false)
   const { data: returnInfo, isLoading } = useDriverReturn({
-    usageSessionId: reservation!.usageSessionId,
+    usageSessionId: reservation!.usageSessionId ?? '',
+    enabled: !!reservation!.usageSessionId,
   })
 
   const imageGroups = [

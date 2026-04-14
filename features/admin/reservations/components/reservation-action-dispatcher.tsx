@@ -39,7 +39,7 @@ export function ReservationActionDispatcher({ action, item, clear, currentTab }:
               name: item.vehicle?.name ?? '',
               plateNumber: item.vehicle?.plateNumber ?? '',
             },
-            hasIssue: item.hasIssue,
+            hasIssue: item.hasIssue ?? false,
           },
           action,
         )
