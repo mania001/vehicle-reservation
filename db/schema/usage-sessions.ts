@@ -1,4 +1,4 @@
-import { boolean, pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { boolean, index, pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { reservations } from './reservations'
 import { vehicles } from './vehicles'
 
@@ -11,78 +11,115 @@ export const usageStatusEnum = pgEnum('usage_status', [
   'cancelled', // 관리자에 의해 종료
 ])
 
-export const usageSessions = pgTable('usage_sessions', {
-  id: uuid('id').defaultRandom().primaryKey(),
+export const usageSessions = pgTable(
+  'usage_sessions',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
 
-  /**
-   * 관계
-   */
-  reservationId: uuid('reservation_id')
-    .notNull()
-    .references(() => reservations.id, { onDelete: 'cascade' }),
+    /**
+     * 관계
+     */
+    reservationId: uuid('reservation_id')
+      .notNull()
+      .references(() => reservations.id, { onDelete: 'cascade' }),
 
-  vehicleId: uuid('vehicle_id').references(() => vehicles.id), // 승인 시점에는 null 가능
+    vehicleId: uuid('vehicle_id').references(() => vehicles.id), // 승인 시점에는 null 가능
 
-  /**
-   * 상태
-   */
-  status: usageStatusEnum('status').notNull().default('scheduled'),
+    /**
+     * 상태
+     */
+    status: usageStatusEnum('status').notNull().default('scheduled'),
 
-  /**
-   * 예약 시간 스냅샷 (승인 시점 기준)
-   */
-  scheduledStartAt: timestamp('scheduled_start_at', {
-    withTimezone: true,
-  }).notNull(),
+    /**
+     * 예약 시간 스냅샷 (승인 시점 기준)
+     */
+    scheduledStartAt: timestamp('scheduled_start_at', {
+      withTimezone: true,
+    }).notNull(),
 
-  scheduledEndAt: timestamp('scheduled_end_at', {
-    withTimezone: true,
-  }).notNull(),
+    scheduledEndAt: timestamp('scheduled_end_at', {
+      withTimezone: true,
+    }).notNull(),
 
-  /**
-   * 승인 / 사용 이벤트 시각
-   */
-  approvedAt: timestamp('approved_at', {
-    withTimezone: true,
-  }).notNull(),
+    /**
+     * 승인 / 사용 이벤트 시각
+     */
+    approvedAt: timestamp('approved_at', {
+      withTimezone: true,
+    }).notNull(),
 
-  checkedOutAt: timestamp('checked_out_at', {
-    withTimezone: true,
-  }),
+    checkedOutAt: timestamp('checked_out_at', {
+      withTimezone: true,
+    }),
 
-  returnedAt: timestamp('returned_at', {
-    withTimezone: true,
-  }),
+    returnedAt: timestamp('returned_at', {
+      withTimezone: true,
+    }),
 
-  inspectedAt: timestamp('inspected_at', {
-    withTimezone: true,
-  }),
+    inspectedAt: timestamp('inspected_at', {
+      withTimezone: true,
+    }),
 
-  /**
-   * 노쇼 관련
-   */
-  noShowReportedAt: timestamp('no_show_reported_at', {
-    withTimezone: true,
-  }),
+    /**
+     * 노쇼 관련
+     */
+    noShowReportedAt: timestamp('no_show_reported_at', {
+      withTimezone: true,
+    }),
 
-  /**
-   * 감사/추적
-   */
-  createdAt: timestamp('created_at', {
-    withTimezone: true,
-  })
-    .defaultNow()
-    .notNull(),
+    /**
+     * 감사/추적
+     */
+    createdAt: timestamp('created_at', {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
 
-  updatedAt: timestamp('updated_at', {
-    withTimezone: true,
-  })
-    .defaultNow()
-    .notNull(),
+    updatedAt: timestamp('updated_at', {
+      withTimezone: true,
+    })
+      .defaultNow()
+      .notNull(),
 
-  beforeDriveChecked: boolean('before_drive_checked').notNull().default(false),
+    beforeDriveChecked: boolean('before_drive_checked').notNull().default(false),
 
-  hasIssue: boolean('has_issue').notNull().default(false),
+    hasIssue: boolean('has_issue').notNull().default(false),
 
-  issueReportedAt: timestamp('issue_reported_at', { withTimezone: true }),
-})
+    issueReportedAt: timestamp('issue_reported_at', { withTimezone: true }),
+  },
+  table => {
+    return {
+      /**
+       * 🔥 1. JOIN 핵심 (무조건 필요)
+       */
+      idxUsageReservationId: index('idx_usage_reservation_id').on(table.reservationId),
+
+      /**
+       * 🔥 2. return_check 탭 최적화 (핵심)
+       * WHERE: status='inspected' AND hasIssue=false
+       * ORDER BY: inspectedAt
+       */
+      idxUsageStatusInspected: index('idx_usage_status_inspected').on(
+        table.status,
+        table.inspectedAt,
+      ),
+
+      /**
+       * 🔥 3. issue 탭 최적화
+       * WHERE: hasIssue = true
+       */
+      idxUsageHasIssue: index('idx_usage_has_issue').on(table.hasIssue, table.status),
+
+      /**
+       * 🔥 4. need_car 탭 (vehicle null 체크)
+       */
+      idxUsageVehicleId: index('idx_usage_vehicle_id').on(table.vehicleId),
+
+      /**
+       * 🔥 5. 상태 기반 필터링 (공통)
+       */
+      idxUsageStatus: index('idx_usage_status').on(table.status),
+    }
+  },
+)

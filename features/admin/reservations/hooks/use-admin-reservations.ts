@@ -4,15 +4,24 @@ import { useQuery } from '@tanstack/react-query'
 import { ReservationTabId } from '../constants/reservation-tabs'
 import { adminReservationQueryKeys } from '../query-keys'
 import { fetchReservations } from '../api/fetch-reservations'
+import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 
-export function useAdminReservations(tab: ReservationTabId) {
+export function useAdminReservations(
+  tab: ReservationTabId,
+  options?: {
+    initialData?: { items: AdminBookingItem[] }
+  },
+) {
   return useQuery({
     queryKey: adminReservationQueryKeys.list(tab),
     queryFn: () => fetchReservations(tab),
-    staleTime: 1000 * 30,
-    refetchInterval: 1000 * 30, // ✅ 30초마다 자동 갱신
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    refetchIntervalInBackground: false,
+    initialData: options?.initialData,
+
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false,
   })
 }

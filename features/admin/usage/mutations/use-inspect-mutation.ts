@@ -4,6 +4,7 @@ import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 import { UsageTabId } from '../constants/usage-tabs'
 import { adminUsageQueryKeys } from '../query-keys'
 import { inspectUsage, InspectUsagePayload } from '../api/inspect-usage'
+import { adminReservationQueryKeys } from '../../reservations/query-keys'
 
 function getNextTabAfterInspect(currentTab: UsageTabId): UsageTabId | null {
   if (currentTab === 'returned') return null
@@ -40,6 +41,20 @@ export function useInspectMutation(currentTab: UsageTabId) {
 
     onErrorSideEffect: () => {
       toast.error('점검 처리 실패')
+    },
+
+    extraInvalidateKeys: payload => {
+      if (payload.issue) {
+        return [
+          adminReservationQueryKeys.list('issue'), // 리스트
+          adminUsageQueryKeys.counts(), // 카운트
+        ]
+      } else {
+        return [
+          adminReservationQueryKeys.list('return_check'), // 리스트
+          adminUsageQueryKeys.counts(), // 카운트
+        ]
+      }
     },
   })
 }

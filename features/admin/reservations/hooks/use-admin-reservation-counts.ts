@@ -9,10 +9,9 @@ export function useAdminReservationCounts() {
   return useQuery<ReservationCountsResponse>({
     queryKey: adminReservationQueryKeys.counts(),
     queryFn: fetchReservationCounts,
-    staleTime: 1000 * 30,
-    refetchInterval: 1000 * 30, // ✅ 30초마다 자동 갱신
+    staleTime: 1000 * 60 * 1,
+    refetchInterval: 1000 * 60, // ✅ 1분마다 자동 갱신
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    refetchIntervalInBackground: false,
   })
 }

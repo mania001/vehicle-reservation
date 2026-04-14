@@ -5,9 +5,36 @@ import { RESERVATION_TABS, ReservationTabId } from '../constants/reservation-tab
 import { useAdminReservations } from '../hooks/use-admin-reservations'
 import ReservationList from './reservation-list'
 import { useAdminReservationCounts } from '../hooks/use-admin-reservation-counts'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef } from 'react'
+import { adminReservationQueryKeys } from '../query-keys'
+import { AdminBookingItem } from '../../_shared/types/admin-booking-item'
 
-export function ReservationView() {
+export function ReservationView({
+  initialTab = 'pending',
+  initialData,
+}: {
+  initialTab: ReservationTabId
+  initialData: { items: AdminBookingItem[] }
+}) {
   const countsQuery = useAdminReservationCounts()
+  const qc = useQueryClient()
+
+  const prevPendingRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    const curr = countsQuery.data?.pending
+    if (curr == null) return
+
+    if (prevPendingRef.current !== null && curr !== prevPendingRef.current) {
+      qc.invalidateQueries({
+        queryKey: adminReservationQueryKeys.list('pending'),
+        refetchType: 'active',
+      })
+    }
+
+    prevPendingRef.current = curr
+  }, [countsQuery.data?.pending, qc])
 
   const tabs = RESERVATION_TABS.map(tab => ({
     ...tab,
@@ -17,14 +44,26 @@ export function ReservationView() {
   return (
     <AdminViewPager<ReservationTabId>
       tabs={tabs}
-      defaultTab="pending"
-      render={tab => <ReservationTabContent tab={tab} />}
+      defaultTab={initialTab}
+      render={tab => (
+        <ReservationTabContent tab={tab} initialTab={initialTab} initialData={initialData} />
+      )}
     />
   )
 }
 
-function ReservationTabContent({ tab }: { tab: ReservationTabId }) {
-  const { data, isLoading, isError } = useAdminReservations(tab)
+function ReservationTabContent({
+  tab,
+  initialTab,
+  initialData,
+}: {
+  tab: ReservationTabId
+  initialTab: ReservationTabId
+  initialData?: { items: AdminBookingItem[] }
+}) {
+  const { data, isLoading, isError } = useAdminReservations(tab, {
+    initialData: tab === initialTab ? initialData : undefined,
+  })
 
   if (isLoading) {
     return (

@@ -6,7 +6,7 @@ export type AdminBookingItem = {
   publicCode: string
 
   reservationStatus: ReservationStatus
-  usageSessionId: string
+  usageSessionId: string | null
   usageStatus: UsageStatus | null
 
   requesterName: string
@@ -19,10 +19,10 @@ export type AdminBookingItem = {
   startAt: string
   endAt: string
 
-  cancelReason?: string
-  noShowReportedAt?: string
+  cancelReason: string | null
+  noShowReportedAt: string | null
 
-  vehicle?: {
+  vehicle: {
     id: string
     name: string
     plateNumber: string
@@ -30,6 +30,6 @@ export type AdminBookingItem = {
     fuelType?: string
   } | null
 
-  hasIssue?: boolean // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
+  hasIssue: boolean | null // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
   createdAt: string
 }

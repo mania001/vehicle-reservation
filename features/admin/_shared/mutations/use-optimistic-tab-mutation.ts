@@ -24,6 +24,11 @@ export type OptimisticTabMutationConfig<TabId extends string, ListItem, Payload,
    */
   onSuccessSideEffect?: (result: Result, payload: Payload) => void
   onErrorSideEffect?: (error: unknown, payload: Payload) => void
+
+  extraInvalidateKeys?: (
+    payload: Payload,
+    currentTab: TabId,
+  ) => ReadonlyArray<ReadonlyArray<unknown>>
 }
 
 type CountsMap<TabId extends string> = Record<TabId, number>
@@ -113,6 +118,12 @@ export function useOptimisticTabMutation<TabId extends string, ListItem, Payload
       const tabs = getInvalidateTabs?.(payload, currentTab) ?? []
       for (const tab of tabs) {
         qc.invalidateQueries({ queryKey: listQueryKey(tab) })
+      }
+
+      // ✅ 추가
+      const extraKeys = config.extraInvalidateKeys?.(payload, currentTab) ?? []
+      for (const key of extraKeys) {
+        qc.invalidateQueries({ queryKey: key })
       }
     },
   })
