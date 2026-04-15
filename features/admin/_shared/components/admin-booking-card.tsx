@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { AdminBookingItem } from '../types/admin-booking-item'
 import { getTimeAgo } from '@/lib/time'
 import { useState } from 'react'
@@ -29,7 +29,7 @@ export function AdminBookingCard({ item, onAction }: Props) {
     hasIssue: item.hasIssue, // usageStatus가 'returned'인 경우, 점검 결과 이슈 여부
   } as AdminDomainState
 
-  const router = useRouter()
+  // const router = useRouter()
 
   const badge = getBadge(domainState)
   const actions = getAvailableActions(domainState)
@@ -56,7 +56,10 @@ export function AdminBookingCard({ item, onAction }: Props) {
       className={cn(
         'bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-4 transition-all hover:shadow-md',
       )}
-      onClick={() => router.push(`/admin/reservations/${item.reservationId}`)}
+      onClick={e => {
+        e.stopPropagation()
+        // router.push(`/admin/reservations/${item.reservationId}`)
+      }}
     >
       {/* 상단 */}
       <div className="relative flex justify-between items-start">
