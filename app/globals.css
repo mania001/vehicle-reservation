@@ -173,6 +173,18 @@
   }
 }
 
+@layer utilities {
+  /* scrollbar 완전 제거 */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 @theme inline {
   --color-primary-hover: var(--primary-hover);
   --color-primary-active: var(--primary-active);

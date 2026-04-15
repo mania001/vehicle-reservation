@@ -2,14 +2,14 @@
 
 import { Building2, FileText, MapPin, Phone, User } from 'lucide-react'
 import { FormField } from './form-field'
-import { MobileDateTimePicker } from './mobile-date-picker'
-import { addHours } from 'date-fns'
 import { ReserveFormValues, useReserveForm } from '../hooks/use-reserve-form'
 import { Controller } from 'react-hook-form'
 import { StickyFooter } from '@/components/common/sticky-footer'
 import { createReservation } from '../actions/create-reservation'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { PhoneField } from './phone-field'
+import { RangeDateTimePicker } from './range-date-time-picker'
 
 export default function ReserveForm() {
   const router = useRouter()
@@ -18,13 +18,8 @@ export default function ReserveForm() {
     register,
     control,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors, isSubmitting },
   } = form
-
-  const startAt = watch('startAt')
-  const endAt = watch('endAt')
 
   // 3. 서버 액션 제출 핸들러
   const onSubmit = async (data: ReserveFormValues) => {
@@ -44,87 +39,70 @@ export default function ReserveForm() {
   }
 
   // const submit = useServerFormAction<ReserveFormValues>(createReservation)
-
   return (
-    <form className="space-y-5 pb-32" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-5 pb-32 mt-1" onSubmit={handleSubmit(onSubmit)}>
       <FormField
         label={'이름'}
         icon={<User className="w-4 h-4 text-slate-400" />}
         placeholder={'이름을 입력하세요'}
         {...register('name')}
         error={errors.name?.message}
+        hiddenLabel
       />
       <FormField
         label={'소속'}
         icon={<Building2 className="w-4 h-4 text-slate-400" />}
-        placeholder={'소속 또는 부서명을 입력하세요'}
+        placeholder={'예배당 또는 기관명을 입력하세요'}
         {...register('organization')}
         error={errors.organization?.message}
+        hiddenLabel
       />
-      <FormField
-        label={'연락처'}
-        type="tel"
-        icon={<Phone className="w-4 h-4 text-slate-400" />}
-        placeholder={'휴대폰 번호를 입력해주세요.'}
-        {...register('phone')}
-        error={errors.phone?.message}
-      />
-
-      <div className="py-2 border-b border-slate-50" />
-
       <Controller
-        name="startAt"
+        name="phone"
         control={control}
         render={({ field }) => (
-          <MobileDateTimePicker
-            label="예약 시작 시간"
+          <PhoneField
+            icon={<Phone className="w-4 h-4 text-slate-400" />}
             value={field.value}
-            onChange={date => {
-              field.onChange(date)
-              if (endAt && date && endAt < date) {
-                setValue('endAt', addHours(date, 1))
-              }
-            }}
-            variant="start"
+            onChange={field.onChange} // raw 값 들어감
+            placeholder={'휴대폰 번호를 입력해주세요.'}
+            error={errors.phone?.message}
           />
         )}
       />
-      {errors.startAt && <p className="text-xs text-red-500 ml-1">{errors.startAt.message}</p>}
+
+      {/* <div className="py-1 border-b border-slate-50" /> */}
 
       <Controller
         control={control}
-        name="endAt"
+        name="range"
+        defaultValue={{ startAt: null, endAt: null }}
         render={({ field }) => (
-          <MobileDateTimePicker
-            label="예약 종료 시간"
-            value={field.value}
-            onChange={field.onChange}
-            minDate={startAt}
-            variant="end"
-          />
+          <RangeDateTimePicker label="예약 시간" value={field.value} onChange={field.onChange} />
         )}
       />
-      {errors.endAt && <p className="text-xs text-red-500 ml-1">{errors.endAt.message}</p>}
 
-      <div className="py-1 border-b border-slate-50" />
+      {errors.range && <p className="text-xs text-red-500">{errors.range?.message || ''}</p>}
+
+      {/* <div className="py-1 border-b border-slate-50" /> */}
 
       <FormField
         label="사용 목적"
         icon={<FileText className="w-4 h-4 text-slate-400" />}
-        placeholder="예: 수련회, MT, 경조사"
+        placeholder="사용목적 : 예) 수련회, MT, 경조사"
         {...register('purpose')}
         error={errors.purpose?.message}
+        hiddenLabel
       />
-
       <FormField
         label="목적지"
         id="destination"
         icon={<MapPin className="w-4 h-4 text-slate-400" />}
-        placeholder="예: OO 예배당"
+        placeholder="목적지 : 예) OO 예배당"
         {...register('destination')}
         error={errors.destination?.message}
+        hiddenLabel
       />
-
       <StickyFooter
         type={'submit'}
         label={isSubmitting ? '예약 중…' : '예약 신청하기'}

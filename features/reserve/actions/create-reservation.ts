@@ -19,9 +19,19 @@ export async function createReservation(values: ReserveFormValues) {
   //     error: '입력값이 올바르지 않습니다.',
   //   }
   // }
+  if (!parsed.range.startAt || !parsed.range.endAt) {
+    throw new Error('예약 시간이 올바르지 않습니다.')
+  }
 
-  // 2️⃣ 도메인 타입으로 명시
-  const data: ReservationCreateInput = parsed
+  const data: ReservationCreateInput = {
+    name: parsed.name,
+    phone: parsed.phone,
+    organization: parsed.organization,
+    startAt: parsed.range.startAt,
+    endAt: parsed.range.endAt,
+    purpose: parsed.purpose,
+    destination: parsed.destination,
+  }
 
   const publicCode = generatePublicCode()
 
@@ -31,7 +41,6 @@ export async function createReservation(values: ReserveFormValues) {
       requesterName: data.name,
       requesterPhone: data.phone,
       organization: data.organization,
-
       startAt: data.startAt,
       endAt: data.endAt,
       purpose: data.purpose,
