@@ -6,7 +6,6 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -122,8 +121,8 @@ export function UsageBottomDrawer({ reservation }: Props) {
           차량 이용하기
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-full w-full px-4">
-        <div className="mx-auto w-full max-w-md">
+      <DrawerContent className="max-h-[85vh] px-4 pb-4">
+        <div className="mx-auto w-full max-w-md flex flex-col h-full overflow-hidden">
           <DrawerHeader className="shrink-0">
             <DrawerTitle>출발 전 차량 점검</DrawerTitle>
             <DrawerDescription>안전한 운행을 위해 차량 상태를 기록해주세요.</DrawerDescription>
@@ -240,7 +239,7 @@ export function UsageBottomDrawer({ reservation }: Props) {
             </div>
             {error && <div className="text-red-500 text-sm">{error}</div>}
           </div>
-          <DrawerFooter className="shrink-0 px-0 flex flex-row gap-3">
+          <div className="flex flex-row gap-2 pt-2">
             <DrawerClose asChild>
               <Button type="button" variant="outline" className="flex-1 h-12" disabled={loading}>
                 취소
@@ -249,7 +248,7 @@ export function UsageBottomDrawer({ reservation }: Props) {
             <Button className="flex-2  h-12" onClick={handleSubmit} disabled={loading}>
               {loading ? '등록 중...' : '등록하기'}
             </Button>
-          </DrawerFooter>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>

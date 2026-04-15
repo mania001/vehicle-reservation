@@ -95,7 +95,7 @@ export function ReturnBottomDrawer({ reservation }: Props) {
 
   // 1. 유효성 검사 함수
   const validateForm = () => {
-    if (startInfo?.mileage && mileage <= startInfo.mileage) {
+    if (startInfo?.mileage && mileage < startInfo.mileage) {
       toast.error(`주행 거리가 이전 기록(${startInfo.mileage}km)보다 작을 수 없습니다.`)
       return false
     }

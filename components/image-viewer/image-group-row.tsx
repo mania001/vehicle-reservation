@@ -11,7 +11,18 @@ type Props = {
 
 export function ImageGroupRow({ label, images, onOpen }: Props) {
   if (!images?.length) {
-    return <div className="flex-1  text-sm font-medium text-left">{label} (0)</div>
+    return (
+      <div className="relative flex-1 overflow-auto text-left">
+        <div className="text-sm font-medium">{label} (0)</div>
+        <div className="relative w-fit">
+          <div className="relative flex -space-x-4 mt-1">
+            <div className="relative w-12 h-12 rounded-md overflow-hidden  shadow flex items-center justify-center bg-gray-100">
+              <div className="text-[8px] text-gray-500">No Image</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const preview = images.slice(0, 3)
