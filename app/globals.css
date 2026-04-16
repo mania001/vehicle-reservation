@@ -168,8 +168,28 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  html,
+  body {
+    height: auto;
+  }
+
   body {
     @apply bg-background text-foreground;
+
+    min-height: 100dvh; /* 핵심 */
+    overflow-x: hidden;
+
+    -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+
+    /* iPhone 하단 safe area 대응 */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* 키보드 올라올 때 input 가려짐 방지 */
+  input,
+  textarea {
+    scroll-margin-top: 120px;
   }
 }
 

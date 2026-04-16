@@ -9,7 +9,7 @@ export function AdminBottomNavigation() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 max-w-md border-t mx-auto border-gray-100 w-full z-50 bg-background pt-1 pb-4 shadow-md rounded-t-2xl backdrop-blur-xl ">
+    <nav className="fixed bottom-0 max-w-md border-t mx-auto border-gray-100 w-full z-50 bg-background pt-1 pb-4 shadow-md rounded-t-2xl backdrop-blur-xl">
       <ul className="flex h-14">
         {ADMIN_NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href)

@@ -7,9 +7,7 @@ export default async function AdminProtectedLayout({ children }: { children: Rea
 
   return (
     <QueryProvider>
-      <div className="relative min-h-screen flex flex-col bg-gray-100 max-w-md mx-auto">
-        {children}
-      </div>
+      <div className="relative bg-gray-100 max-w-md mx-auto min-h-screen">{children}</div>
     </QueryProvider>
   )
 }

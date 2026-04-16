@@ -8,7 +8,7 @@ export default function ReservePage() {
       <ReserveHeader />
 
       {/* 2. 입력 폼 섹션  */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1">
         <ReserveForm />
       </main>
     </>

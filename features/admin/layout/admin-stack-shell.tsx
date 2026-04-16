@@ -12,7 +12,7 @@ export function AdminStackShell({
     <>
       <AdminStackHeader title={title} />
 
-      <main className="flex-1 overflow-y-auto px-4 pt-14">
+      <main className="px-4 pt-14">
         <StackRouteTransition>{children}</StackRouteTransition>
       </main>
     </>

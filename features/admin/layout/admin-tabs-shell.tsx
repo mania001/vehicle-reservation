@@ -7,7 +7,7 @@ export function AdminTabsShell({ children }: { children: React.ReactNode }) {
     <>
       <AdminHeader />
 
-      <main className="flex-1 overflow-y-auto pb-16 pt-14">
+      <main className="pb-16 pt-14">
         <TabsRouteTransition>{children}</TabsRouteTransition>
       </main>
 
